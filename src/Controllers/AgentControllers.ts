@@ -73,3 +73,24 @@ export const AgentsLogin = AsyncHandler(
     }
   }
 );
+
+// Get a single Agent:
+export const GetSingleAgent = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const singleagent = await AgentModels.findById(req.params.userID);
+
+    if (!singleagent) {
+      next(
+        new MainAppError({
+          message: "Agents not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+
+    return res.status(200).json({
+      message: "Successfully got this single agent",
+      data: singleagent,
+    });
+  }
+);
