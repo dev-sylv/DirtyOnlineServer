@@ -1,9 +1,9 @@
 import { RequestHandler } from "express";
-import { UserSchemaValidation } from "./UserSchemaValidation";
+import { AgentSchemaValidation } from "./AgentSchemaValidation";
 import { Validator } from "../Validator";
 
-export const UserRegisterValidation: RequestHandler = (req, res, next) =>
-  Validator(UserSchemaValidation.Register, req.body, next);
+export const AgentRegisterValidation: RequestHandler = (req, res, next) =>
+  Validator(AgentSchemaValidation.Register, req.body, next);
 
-export const UserLoginValidation: RequestHandler = (req, res, next) =>
-  Validator(UserSchemaValidation.Login, req.body, next);
+export const AgentLoginValidation: RequestHandler = (req, res, next) =>
+  Validator(AgentSchemaValidation.Login, req.body, next);

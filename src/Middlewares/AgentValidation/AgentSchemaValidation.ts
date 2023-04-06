@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-export const UserSchemaValidation = {
+export const AgentSchemaValidation = {
   Register: Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
