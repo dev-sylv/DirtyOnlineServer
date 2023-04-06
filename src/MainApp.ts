@@ -4,12 +4,6 @@ import cors from "cors";
 
 import morgan from "morgan";
 
-import UserRouter from "./Routes/UserRoutes";
-
-import BusinessRouter from "./Routes/BusinessRoutes";
-
-import GiftCardRoutes from "./Routes/GiftCardRoutes";
-
 import { AppError, HTTPCODES } from "./Utils/AppError";
 
 import { ErrorHandler } from "./Middlewares/ErrorHandler/ErrorHandler";
@@ -20,9 +14,6 @@ export const AppConfig = (app: Application) => {
   app.use(morgan("dev"));
 
   // Configuring the routes:
-  app.use("/api", UserRouter);
-  app.use("/api", BusinessRouter);
-  app.use("/api", GiftCardRoutes);
 
   app.all("*", (req: Request, res: Response, next: NextFunction) => {
     next(

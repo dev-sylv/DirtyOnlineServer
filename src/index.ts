@@ -12,7 +12,7 @@ DBCONNECTION();
 
 app.get("/", (req: Request, res: Response) => {
   return res.status(200).json({
-    message: "API READY FOR GIFT CARD IDEA CONSUMPTION",
+    message: "API READY FOR DIRTY ONLINE PROJECT",
   });
 });
 
