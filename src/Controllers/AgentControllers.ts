@@ -98,7 +98,7 @@ export const GetAllAgent = AsyncHandler(
 // Get a single Agent:
 export const GetSingleAgent = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const singleagent = await AgentModels.findById(req.params.userID);
+    const singleagent = await AgentModels.findById(req.params.agentID);
 
     if (!singleagent) {
       next(

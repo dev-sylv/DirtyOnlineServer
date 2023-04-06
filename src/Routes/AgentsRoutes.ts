@@ -8,6 +8,8 @@ import {
 import {
   AgentsLogin,
   AgentsRegistration,
+  GetAllAgent,
+  GetSingleAgent,
 } from "../Controllers/AgentControllers";
 
 const AgentRouter = express.Router();
@@ -17,5 +19,7 @@ AgentRouter.route("/register-agents").post(
   AgentsRegistration
 );
 AgentRouter.route("/login-agents").post(AgentLoginValidation, AgentsLogin);
+AgentRouter.route("/getallagents").get(GetAllAgent);
+AgentRouter.route("/getallagents/:agentID").get(GetSingleAgent);
 
 export default AgentRouter;
