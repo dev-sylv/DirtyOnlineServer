@@ -74,6 +74,27 @@ export const AgentsLogin = AsyncHandler(
   }
 );
 
+// Get all Agents:
+export const GetAllAgent = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const agents = await AgentModels.find();
+
+    if (!agents) {
+      next(
+        new MainAppError({
+          message: "Agents not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+
+    return res.status(200).json({
+      message: "Successfully got all agents",
+      data: agents,
+    });
+  }
+);
+
 // Get a single Agent:
 export const GetSingleAgent = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
