@@ -43,6 +43,13 @@ const MalamSchema: Schema<MalamDetails> = new Schema(
     dateTime: {
       type: String,
     },
+    status: {
+      type: String,
+      required: [true, "Please enter your status"],
+      message: "Malaam can be free or on duty",
+      enum: ["Free", "On-duty"],
+      default: "Free",
+    },
   },
   {
     timestamps: true,

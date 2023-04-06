@@ -7,7 +7,7 @@ import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
 // Agents Registration:
 export const AgentsRegistration = AsyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
-    const { name, email, phoneNumber, username, password } = req.body;
+    const { name, email, LGA, password } = req.body;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -16,26 +16,60 @@ export const AgentsRegistration = AsyncHandler(
 
     if (findEmail) {
       next(
-        new Main({
-          message: "User with this account already exists",
+        new MainAppError({
+          message: "Agent with this account already exists",
           httpcode: HTTPCODES.FORBIDDEN,
         })
       );
     }
 
-    const Users = await UserModels.create({
+    const Agents = await AgentModels.create({
       name,
       email,
-      username,
-      phoneNumber: "234" + phoneNumber,
+      LGA,
       password: hashedPassword,
       confirmPassword: hashedPassword,
-      status: "User",
     });
 
     return res.status(201).json({
-      message: "Successfully created User",
-      data: Users,
+      message: "Successfully created Agent",
+      data: Agents,
     });
+  }
+);
+
+// Agents Login:
+export const AgentsLogin = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+
+    const CheckEmail = await AgentModels.findOne({ email });
+
+    if (!CheckEmail) {
+      next(
+        new MainAppError({
+          message: "User not Found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+
+    const CheckPassword = await bcrypt.compare(password, CheckEmail!.password);
+
+    if (!CheckPassword) {
+      next(
+        new MainAppError({
+          message: "Email or password not correct",
+          httpcode: HTTPCODES.CONFLICT,
+        })
+      );
+    }
+
+    if (CheckEmail && CheckPassword) {
+      return res.status(200).json({
+        message: "Login Successfull",
+        data: CheckEmail,
+      });
+    }
   }
 );

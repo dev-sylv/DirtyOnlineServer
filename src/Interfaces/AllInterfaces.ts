@@ -32,4 +32,5 @@ export interface MalamDetails {
   password: string;
   confirmPassword: string;
   dateTime: string;
+  status: string;
 }
