@@ -1,10 +1,10 @@
 import mongoose, { Schema, model } from "mongoose";
 
-import { UserDetails } from "../Interfaces/AllInterfaces";
+import { AgentDetails } from "../Interfaces/AllInterfaces";
 
 import isEmail from "validator/lib/isEmail";
 
-const UserSchema: Schema<UserDetails> = new Schema(
+const AgentSchema: Schema<AgentDetails> = new Schema(
   {
     name: {
       type: String,
@@ -17,10 +17,6 @@ const UserSchema: Schema<UserDetails> = new Schema(
       lowercase: true,
       trim: true,
       validate: [isEmail, "Please enter a valid email"],
-    },
-    username: {
-      type: String,
-      required: [true, "Please enter a suitable username"],
     },
     phoneNumber: {
       type: Number,
@@ -50,6 +46,6 @@ const UserSchema: Schema<UserDetails> = new Schema(
   }
 );
 
-const UserModels = model<UserDetails>("Users", UserSchema);
+const AgentModels = model<AgentDetails>("Agents", AgentSchema);
 
-export default UserModels;
+export default AgentModels;
