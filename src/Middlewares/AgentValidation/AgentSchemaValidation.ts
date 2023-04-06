@@ -4,6 +4,7 @@ export const AgentSchemaValidation = {
   Register: Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
+    LGA: Joi.string().required(),
     password: Joi.string().min(8).required(),
     confirmPassword: Joi.string().valid(Joi.ref("password")).required(),
   }),
