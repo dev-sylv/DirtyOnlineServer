@@ -50,6 +50,13 @@ const MalamSchema: Schema<MalamDetails> = new Schema(
       enum: ["Free", "On-duty"],
       default: "Free",
     },
+    role: {
+      type: String,
+      required: [true, "Please enter your role"],
+      message: "You can be either User, Malam or Agents",
+      enum: ["User", "Malam", "Agent"],
+      default: "Malam",
+    },
   },
   {
     timestamps: true,

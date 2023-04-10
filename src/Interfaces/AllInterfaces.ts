@@ -8,6 +8,7 @@ export interface UserDetails {
   password: string;
   confirmPassword: string;
   dateTime: string;
+  role: string;
 }
 
 export interface AgentDetails {
@@ -19,6 +20,7 @@ export interface AgentDetails {
   password: string;
   confirmPassword: string;
   dateTime: string;
+  role: string;
 }
 
 export interface MalamDetails {
@@ -33,4 +35,5 @@ export interface MalamDetails {
   confirmPassword: string;
   dateTime: string;
   status: string;
+  role: string;
 }

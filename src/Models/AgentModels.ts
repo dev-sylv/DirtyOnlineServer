@@ -40,6 +40,13 @@ const AgentSchema: Schema<AgentDetails> = new Schema(
       type: String,
       required: [true, "Please confirm your password"],
     },
+    role: {
+      type: String,
+      required: [true, "Please enter your role"],
+      message: "You can be either User, Malam or Agents",
+      enum: ["User", "Malam", "Agent"],
+      default: "Agent",
+    },
   },
   {
     timestamps: true,
