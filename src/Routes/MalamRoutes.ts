@@ -1,32 +1,24 @@
 import express from "express";
 
 import {
-  UserRegisterValidation,
-  UserLoginValidation,
-} from "../Middlewares/UserValidation/UserValidation";
+  GetAllMalams,
+  GetSingleMalams,
+  MalamLogin,
+  MalamRegistration,
+} from "../Controllers/MalamControllers";
 
-import {
-  GetAllUsers,
-  GetSingleUser,
-  UsersLogin,
-  UsersRegistration,
-} from "../Controllers/UserControllers";
+const MalamRouter = express.Router();
 
-const UserRouter = express.Router();
+// Register Malams:
+MalamRouter.route("/register-malam").post(MalamRegistration);
 
-// Register users:
-UserRouter.route("/registeruser").post(
-  UserRegisterValidation,
-  UsersRegistration
-);
+// Login Malams:
+MalamRouter.route("/login-malam").post(MalamLogin);
 
-// Login users:
-UserRouter.route("/loginuser").post(UserLoginValidation, UsersLogin);
+// Get all Malams
+MalamRouter.route("/getmalams").get(GetAllMalams);
 
-// Get all users
-UserRouter.route("/getuser").get(GetAllUsers);
+// Get single Malams:
+MalamRouter.route("/getmalam/:malamID").get(GetSingleMalams);
 
-// Get single users:
-UserRouter.route("/getuser/:userID").get(GetSingleUser);
-
-export default UserRouter;
+export default MalamRouter;

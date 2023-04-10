@@ -118,7 +118,7 @@ export const GetAllMalams = AsyncHandler(
 // Get a single Malams:
 export const GetSingleMalams = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const singleMalams = await MalamModels.findById(req.params.gladID);
+    const singleMalams = await MalamModels.findById(req.params.malamID);
 
     if (!singleMalams) {
       next(
