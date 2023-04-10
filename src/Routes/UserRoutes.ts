@@ -5,15 +5,28 @@ import {
   UserLoginValidation,
 } from "../Middlewares/UserValidation/UserValidation";
 
+import {
+  GetAllUsers,
+  GetSingleUser,
+  UsersLogin,
+  UsersRegistration,
+} from "../Controllers/UserControllers";
+
 const UserRouter = express.Router();
 
 // Register users:
-UserRouter.route("/registeruser").post(UserRegisterValidation);
-UserRouter.route("/user/:userID/history").get(GetSingleUserHistory);
-UserRouter.route("/loginuser").post(UserLoginValidation, UsersLogin);
-UserRouter.route("/getsingleuser/:userID").get(GetSingleUser);
-UserRouter.route("/buyagiftcard/:userID/:businessID/:giftcardID").post(
-  UserBuyAGiftCardWithATMcard
+UserRouter.route("/registeruser").post(
+  UserRegisterValidation,
+  UsersRegistration
 );
+
+// Login users:
+UserRouter.route("/loginuser").post(UserLoginValidation, UsersLogin);
+
+// Get all users
+UserRouter.route("/getuser").get(GetAllUsers);
+
+// Get single users:
+UserRouter.route("/getuser/:userID").get(GetSingleUser);
 
 export default UserRouter;
