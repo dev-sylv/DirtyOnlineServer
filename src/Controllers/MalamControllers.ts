@@ -1,41 +1,51 @@
-// import { NextFunction, Request, Response } from "express";
-// import { AsyncHandler } from "../Utils/AsyncHandler";
-// import bcrypt from "bcrypt";
-// import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
+import { NextFunction, Request, Response } from "express";
+import { AsyncHandler } from "../Utils/AsyncHandler";
+import bcrypt from "bcrypt";
+import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
+import MalamModels from "../Models/MalamModels";
+import AgentModels from "../Models/AgentModels";
 
-// // Malam Registration:
-// export const MalamRegistration = AsyncHandler(
-//   async (req: any, res: Response, next: NextFunction) => {
-//     const { name, phoneNumber, password } = req.body;
+// Malam Registration:
+export const MalamRegistration = AsyncHandler(
+  async (req: any, res: Response, next: NextFunction) => {
+    const { name, phoneNumber, password, LGA } = req.body;
 
-//     const salt = await bcrypt.genSalt(10);
-//     const hashedPassword = await bcrypt.hash(password, salt);
+    const AgentCaretaker = await AgentModels.findById(req.params.agentID);
 
-//     const findEmail = await AgentModels.findOne({ email });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-//     if (findEmail) {
-//       next(
-//         new MainAppError({
-//           message: "Agent with this account already exists",
-//           httpcode: HTTPCODES.FORBIDDEN,
-//         })
-//       );
-//     }
+    const findEmail = await MalamModels.findOne({ name });
 
-//     const Agents = await AgentModels.create({
-//       name,
-//       email,
-//       LGA,
-//       password: hashedPassword,
-//       confirmPassword: hashedPassword,
-//     });
+    if (findEmail) {
+      next(
+        new MainAppError({
+          message: "Malam with this account already exists",
+          httpcode: HTTPCODES.FORBIDDEN,
+        })
+      );
+    }
 
-//     return res.status(201).json({
-//       message: "Successfully created Agent",
-//       data: Agents,
-//     });
-//   }
-// );
+    if (AgentCaretaker?.role === "Agent") {
+      const Malam = await MalamModels.create({
+        name,
+        LGA,
+        phoneNumber,
+        password: hashedPassword,
+        confirmPassword: hashedPassword,
+      });
+
+      return res.status(201).json({
+        message: "Successfully created Malam account",
+        data: Malam,
+      });
+    } else {
+      return res.status(400).json({
+        message: "Only agents can register malams for now",
+      });
+    }
+  }
+);
 
 // // Agents Login:
 // export const AgentsLogin = AsyncHandler(
