@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
 import MalamModels from "../Models/MalamModels";
 import AgentModels from "../Models/AgentModels";
+import otpgenerator from "otp-generator";
 
 // Malam Registration:
 export const MalamRegistration = AsyncHandler(
@@ -14,6 +15,8 @@ export const MalamRegistration = AsyncHandler(
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
+    const MalamInitials = name.slice(0, 3);
 
     const findEmail = await MalamModels.findOne({ name });
 
@@ -31,6 +34,14 @@ export const MalamRegistration = AsyncHandler(
         name,
         LGA,
         phoneNumber,
+        uniqueID:
+          MalamInitials +
+          otpgenerator.generate(10, {
+            upperCaseAlphabets: false,
+            specialChars: false,
+            digits: true,
+            lowerCaseAlphabets: false,
+          }),
         password: hashedPassword,
         confirmPassword: hashedPassword,
       });
@@ -47,41 +58,41 @@ export const MalamRegistration = AsyncHandler(
   }
 );
 
-// // Agents Login:
-// export const AgentsLogin = AsyncHandler(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     const { email, password } = req.body;
+// Malam Login:
+export const MalamLogin = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { phoneNumber, password } = req.body;
 
-//     const CheckEmail = await AgentModels.findOne({ email });
+    const CheckEmail = await AgentModels.findOne({ phoneNumber });
 
-//     if (!CheckEmail) {
-//       next(
-//         new MainAppError({
-//           message: "User not Found",
-//           httpcode: HTTPCODES.NOT_FOUND,
-//         })
-//       );
-//     }
+    if (!CheckEmail) {
+      next(
+        new MainAppError({
+          message: "User not Found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
 
-//     const CheckPassword = await bcrypt.compare(password, CheckEmail!.password);
+    const CheckPassword = await bcrypt.compare(password, CheckEmail!.password);
 
-//     if (!CheckPassword) {
-//       next(
-//         new MainAppError({
-//           message: "Email or password not correct",
-//           httpcode: HTTPCODES.CONFLICT,
-//         })
-//       );
-//     }
+    if (!CheckPassword) {
+      next(
+        new MainAppError({
+          message: "Email or password not correct",
+          httpcode: HTTPCODES.CONFLICT,
+        })
+      );
+    }
 
-//     if (CheckEmail && CheckPassword) {
-//       return res.status(200).json({
-//         message: "Login Successfull",
-//         data: CheckEmail,
-//       });
-//     }
-//   }
-// );
+    if (CheckEmail && CheckPassword) {
+      return res.status(200).json({
+        message: "Malam Login Successfull",
+        data: CheckEmail,
+      });
+    }
+  }
+);
 
 // // Get all Agents:
 // export const GetAllAgent = AsyncHandler(
