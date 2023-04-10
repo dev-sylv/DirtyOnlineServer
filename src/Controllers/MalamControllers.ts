@@ -47,7 +47,7 @@ export const MalamRegistration = AsyncHandler(
       });
 
       return res.status(201).json({
-        message: "Successfully created Malam account",
+        message: `Malam account successfully created by Agent ${AgentCaretaker?.name}`,
         data: Malam,
       });
     } else {

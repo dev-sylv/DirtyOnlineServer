@@ -18,7 +18,7 @@ MalamRouter.route("/login-malam").post(MalamLogin);
 // Get all Malams
 MalamRouter.route("/getmalams").get(GetAllMalams);
 
-// Get single Malams:
+// Get single Malam:
 MalamRouter.route("/getmalam/:malamID").get(GetSingleMalams);
 
 export default MalamRouter;

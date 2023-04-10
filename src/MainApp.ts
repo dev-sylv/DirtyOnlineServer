@@ -8,6 +8,8 @@ import { MainAppError, HTTPCODES } from "./Utils/MainAppError";
 
 import { ErrorHandler } from "./Middlewares/ErrorHandler/ErrorHandler";
 import AgentRouter from "./Routes/AgentsRoutes";
+import UserRouter from "./Routes/UserRoutes";
+import MalamRouter from "./Routes/MalamRoutes";
 
 export const AppConfig = (app: Application) => {
   app.use(express.json());
@@ -16,6 +18,8 @@ export const AppConfig = (app: Application) => {
 
   // Configuring the routes:
   app.use("/api/agents", AgentRouter);
+  app.use("api/users", UserRouter);
+  app.use("api/malams", MalamRouter);
 
   app.all("*", (req: Request, res: Response, next: NextFunction) => {
     next(
