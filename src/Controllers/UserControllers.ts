@@ -99,23 +99,23 @@ export const GetAllUsers = AsyncHandler(
   }
 );
 
-// Get a single Agent:
-export const GetSingleAgent = AsyncHandler(
+// Get a single User:
+export const GetSingleUser = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const singleagent = await AgentModels.findById(req.params.agentID);
+    const singleuser = await UserModels.findById(req.params.userID);
 
-    if (!singleagent) {
+    if (!singleuser) {
       next(
         new MainAppError({
-          message: "Agents not found",
+          message: "This user could not found",
           httpcode: HTTPCODES.NOT_FOUND,
         })
       );
     }
 
     return res.status(200).json({
-      message: "Successfully got this single agent",
-      data: singleagent,
+      message: "Successfully got this single user",
+      data: singleuser,
     });
   }
 );
