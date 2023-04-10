@@ -42,38 +42,59 @@ export const UsersRegistration = AsyncHandler(
   }
 );
 
-// Agents Login:
-export const AgentsLogin = AsyncHandler(
+// Users Login:
+export const UsersLogin = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
+    try {
+      const { email, password } = req.body;
+      if (!email)
+        next(
+          new MainAppError({
+            httpcode: HTTPCODES.BAD_REQUEST,
+            message: "Please input your email",
+          })
+        );
+      const user = await UserModels.findOne({
+        email,
+        password,
+      });
+      if (!user)
+        next(
+          new MainAppError({
+            httpcode: HTTPCODES.NOT_FOUND,
+            message: "Login failed",
+          })
+        );
+      return res.status(HTTPCODES.CREATED).json({
+        message: "Login Successfull",
+        data: user,
+      });
+    } catch (error) {
+      return res.status(HTTPCODES.BAD_REQUEST).json({
+        message: "Request failed",
+        data: error,
+      });
+    }
+  }
+);
 
-    const CheckEmail = await AgentModels.findOne({ email });
+// Get all Agents:
+export const GetAllAgent = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const agents = await AgentModels.find();
 
-    if (!CheckEmail) {
+    if (!agents) {
       next(
         new MainAppError({
-          message: "User not Found",
+          message: "Agents not found",
           httpcode: HTTPCODES.NOT_FOUND,
         })
       );
     }
 
-    const CheckPassword = await bcrypt.compare(password, CheckEmail!.password);
-
-    if (!CheckPassword) {
-      next(
-        new MainAppError({
-          message: "Email or password not correct",
-          httpcode: HTTPCODES.CONFLICT,
-        })
-      );
-    }
-
-    if (CheckEmail && CheckPassword) {
-      return res.status(200).json({
-        message: "Login Successfull",
-        data: CheckEmail,
-      });
-    }
+    return res.status(200).json({
+      message: "Successfully got all agents",
+      data: agents,
+    });
   }
 );
