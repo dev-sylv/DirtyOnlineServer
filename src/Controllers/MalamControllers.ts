@@ -63,7 +63,7 @@ export const MalamLogin = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { phoneNumber, password } = req.body;
 
-    const CheckEmail = await AgentModels.findOne({ phoneNumber });
+    const CheckEmail = await MalamModels.findOne({ phoneNumber });
 
     if (!CheckEmail) {
       next(
@@ -94,26 +94,26 @@ export const MalamLogin = AsyncHandler(
   }
 );
 
-// // Get all Agents:
-// export const GetAllAgent = AsyncHandler(
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     const agents = await AgentModels.find();
+// Get all Malams:
+export const GetAllMalams = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const Malams = await MalamModels.find();
 
-//     if (!agents) {
-//       next(
-//         new MainAppError({
-//           message: "Agents not found",
-//           httpcode: HTTPCODES.NOT_FOUND,
-//         })
-//       );
-//     }
+    if (!Malams) {
+      next(
+        new MainAppError({
+          message: "Malams not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
 
-//     return res.status(200).json({
-//       message: "Successfully got all agents",
-//       data: agents,
-//     });
-//   }
-// );
+    return res.status(200).json({
+      message: "Successfully got all Malams",
+      data: Malams,
+    });
+  }
+);
 
 // // Get a single Agent:
 // export const GetSingleAgent = AsyncHandler(
