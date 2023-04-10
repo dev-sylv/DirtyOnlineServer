@@ -1,12 +1,16 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
-import { AgentDetails } from "../Interfaces/AllInterfaces";
+import { UserDetails } from "../Interfaces/AllInterfaces";
 
 import isEmail from "validator/lib/isEmail";
 
-const AgentSchema: Schema<AgentDetails> = new Schema(
+const UserSchema: Schema<UserDetails> = new Schema(
   {
     name: {
+      type: String,
+      required: [true, "Please enter your name"],
+    },
+    username: {
       type: String,
       required: [true, "Please enter your name"],
     },
@@ -46,6 +50,6 @@ const AgentSchema: Schema<AgentDetails> = new Schema(
   }
 );
 
-const AgentModels = model<AgentDetails>("Agents", AgentSchema);
+const UserModels = model<UserDetails>("Users", UserSchema);
 
-export default AgentModels;
+export default UserModels;
