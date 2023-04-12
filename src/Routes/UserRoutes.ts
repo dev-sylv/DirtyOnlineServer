@@ -8,6 +8,7 @@ import {
 import {
   GetAllUsers,
   GetSingleUser,
+  UserMakesARequest,
   UsersLogin,
   UsersRegistration,
 } from "../Controllers/UserControllers";
@@ -28,5 +29,8 @@ UserRouter.route("/getuser").get(GetAllUsers);
 
 // Get single users:
 UserRouter.route("/getuser/:userID").get(GetSingleUser);
+
+// User makes a request:
+UserRouter.route("/make-request/:userID").post(UserMakesARequest);
 
 export default UserRouter;
