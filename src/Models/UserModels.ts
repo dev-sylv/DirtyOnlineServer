@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
 import { UserDetails } from "../Interfaces/AllInterfaces";
 
@@ -7,10 +7,6 @@ import isEmail from "validator/lib/isEmail";
 const UserSchema: Schema<UserDetails> = new Schema(
   {
     name: {
-      type: String,
-      required: [true, "Please enter your name"],
-    },
-    username: {
       type: String,
       required: [true, "Please enter your name"],
     },
@@ -25,24 +21,50 @@ const UserSchema: Schema<UserDetails> = new Schema(
     phoneNumber: {
       type: Number,
     },
+    address: {
+      type: String,
+      required: [true, "Please confirm your password"],
+    },
     password: {
       type: String,
       required: [true, "Please enter your Password"],
     },
-    confirmPassword: {
-      type: String,
-      required: [true, "Please confirm your password"],
-    },
     dateTime: {
       type: String,
     },
-    LGA: {
+    role: {
       type: String,
-      required: [true, "Please confirm your password"],
+      required: [true, "Please enter your role"],
+      message: "You can be either User or Manager",
+      enum: ["User", "Manager"],
+      default: "User",
     },
-    address: {
-      type: String,
-      required: [true, "Please confirm your password"],
+    station: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Stations",
+      },
+    ],
+    requests: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Requests",
+      },
+    ],
+    history: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Request Histories",
+      },
+    ],
+    transactionHistory: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Transaction Histories",
+      },
+    ],
+    isVerified: {
+      type: Boolean,
     },
   },
   {

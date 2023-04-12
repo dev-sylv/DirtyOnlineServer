@@ -4,7 +4,7 @@ import { ManagerDetails } from "../Interfaces/AllInterfaces";
 
 import isEmail from "validator/lib/isEmail";
 
-const ManagerSchema = new Schema(
+const DirectorSchema = new Schema(
   {
     name: {
       type: String,
@@ -56,6 +56,6 @@ const ManagerSchema = new Schema(
   }
 );
 
-const UserModels = model<ManagerDetails>("Director", ManagerSchema);
+const DirectorModels = model<ManagerDetails>("Director", DirectorSchema);
 
-export default UserModels;
+export default DirectorModels;
