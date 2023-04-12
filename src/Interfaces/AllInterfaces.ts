@@ -52,5 +52,5 @@ export interface stationInterface extends Document {
 
 export interface requestInterface extends Document {
   requestMessage: string;
-  status: string;
+  requestStatus: boolean;
 }
