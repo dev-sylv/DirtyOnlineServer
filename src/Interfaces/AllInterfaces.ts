@@ -18,7 +18,8 @@ export interface UserDetails extends Document {
   password: string;
   dateTime: string;
   role: string;
-  requests: number;
+  makeRequests: {}[];
+  numberOfRequests: number;
   history: {}[];
   station: {};
   transactionHistory: {}[];

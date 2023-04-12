@@ -3,42 +3,56 @@ import { AsyncHandler } from "../Utils/AsyncHandler";
 import bcrypt from "bcrypt";
 import UserModels from "../Models/UserModels";
 import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
+import StationModels from "../Models/StationModels";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
-    const { name, email, username, LGA, address, phone, password } = req.body;
+    const { name, address, phoneNumber, password, stationName } = req.body;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const findEmail = await UserModels.findOne({ username });
+    const findUser = await UserModels.findOne({ phoneNumber });
 
-    if (findEmail) {
+    if (findUser) {
       next(
         new MainAppError({
-          message: "Agent with this account already exists",
+          message: "User with this account already exists",
           httpcode: HTTPCODES.FORBIDDEN,
         })
       );
     }
 
-    const users = await UserModels.create({
-      username,
-      name,
-      email,
-      role: "User",
-      LGA,
-      address,
-      phone,
-      password: hashedPassword,
-      confirmPassword: hashedPassword,
-    });
+    const FindStation = await StationModels.findOne({ stationName });
 
-    return res.status(201).json({
-      message: "Successfully created Users",
-      data: users,
-    });
+    if (FindStation) {
+      const users = await UserModels.create({
+        name,
+        role: "User",
+        address,
+        phoneNumber,
+        password: hashedPassword,
+        station: FindStation,
+        numberOfRequests: 4,
+      });
+
+      await StationModels.updateOne(
+        { id: FindStation._id },
+        { $push: { users: users } }
+      );
+      return res.status(201).json({
+        message: "Successfully created User",
+        data: users,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "Could not register user",
+          httpcode: HTTPCODES.BAD_REQUEST,
+        })
+      );
+    }
   }
 );
 

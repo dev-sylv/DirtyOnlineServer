@@ -20,6 +20,7 @@ const UserSchema: Schema<UserDetails> = new Schema(
     },
     phoneNumber: {
       type: Number,
+      unique: true,
     },
     address: {
       type: String,
@@ -43,7 +44,10 @@ const UserSchema: Schema<UserDetails> = new Schema(
       type: mongoose.Types.ObjectId,
       ref: "Stations",
     },
-    requests: [
+    numberOfRequests: {
+      type: Number,
+    },
+    makeRequests: [
       {
         type: mongoose.Types.ObjectId,
         ref: "Requests",
@@ -63,6 +67,7 @@ const UserSchema: Schema<UserDetails> = new Schema(
     ],
     isVerified: {
       type: Boolean,
+      default: false,
     },
   },
   {
