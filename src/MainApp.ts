@@ -10,16 +10,17 @@ import { ErrorHandler } from "./Middlewares/ErrorHandler/ErrorHandler";
 import AgentRouter from "./Routes/AgentsRoutes";
 import UserRouter from "./Routes/UserRoutes";
 import MalamRouter from "./Routes/MalamRoutes";
+import DirectorRouter from "./Routes/DirectorRoutes";
 
 export const AppConfig = (app: Application) => {
   app.use(express.json());
   app.use(cors());
   app.use(morgan("dev"));
-
   // Configuring the routes:
+  app.use("/api/director", DirectorRouter);
   app.use("/api/agents", AgentRouter);
-  app.use("api/users", UserRouter);
-  app.use("api/malams", MalamRouter);
+  app.use("/api/users", UserRouter);
+  app.use("/api/malams", MalamRouter);
 
   app.all("*", (req: Request, res: Response, next: NextFunction) => {
     next(
