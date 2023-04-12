@@ -15,6 +15,6 @@ DirectorRouter.route("/register-director").post(DirectorRegistration);
 // Login director:
 DirectorRouter.route("/login-director").post(DirectorLogin);
 // Create a station:
-DirectorRouter.route("/new-station").post(DirectorCreatesStation);
+DirectorRouter.route("/new-station/:directorID").post(DirectorCreatesStation);
 
 export default DirectorRouter;
