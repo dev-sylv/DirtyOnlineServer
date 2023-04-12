@@ -39,12 +39,10 @@ const UserSchema: Schema<UserDetails> = new Schema(
       enum: ["User", "Malam", "Manager"],
       default: "User",
     },
-    station: [
-      {
-        type: mongoose.Types.ObjectId,
-        ref: "Stations",
-      },
-    ],
+    station: {
+      type: mongoose.Types.ObjectId,
+      ref: "Stations",
+    },
     requests: [
       {
         type: mongoose.Types.ObjectId,
