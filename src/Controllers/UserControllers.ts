@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import UserModels from "../Models/UserModels";
 import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
 import StationModels from "../Models/StationModels";
+import RequestModels from "../Models/RequestModels";
+import mongoose from "mongoose";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
@@ -127,5 +129,39 @@ export const GetSingleUser = AsyncHandler(
 );
 
 // User makes a request:
+export const UserMakesARequest = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const getUser = await UserModels.findById(req.params.userID);
+
+    if (getUser) {
+      if (getUser!.numberOfRequests <= 4) {
+        const GetUserStation = getUser?.station;
+        // User makes the requests:
+        const Time = new Date();
+        const DisposewasteRequests = await RequestModels.create({
+          requestMessage: `${getUser?.name} who resides at ${getUser?.address} made a request by ${Time} for a waste disposal`,
+          requestStatus: true,
+        });
+        // Check if user stations is in all the stations
+        const CheckUserStation = await StationModels.findOne({
+          GetUserStation,
+        });
+        // Get the station the user is apportioned to and push the created request into it:
+        getUser?.makeRequests.push(
+          new mongoose.Types.ObjectId(DisposewasteRequests?._id)
+        );
+        getUser?.save();
+      } else {
+        return res.status(HTTPCODES.BAD_REQUEST).json({
+          message: "You can't make any other requests till next month",
+        });
+      }
+    } else {
+      return res.status(HTTPCODES.NOT_FOUND).json({
+        message: "User account not found",
+      });
+    }
+  }
+);
 
 // User closes a request:
