@@ -21,6 +21,7 @@ export interface UserDetails extends Document {
   requests: number;
   history: {}[];
   station: {};
+  transactionHistory: {}[];
   isVerified: boolean;
 }
 
@@ -46,7 +47,7 @@ export interface stationInterface extends Document {
   users: {}[];
   requests: {}[];
   transactionHistory: {}[];
-  feedbacks: {}[];
+  feedbacks: string[];
 }
 
 export interface requestInterface extends Document {
