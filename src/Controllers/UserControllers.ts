@@ -125,3 +125,7 @@ export const GetSingleUser = AsyncHandler(
     });
   }
 );
+
+// User makes a request:
+
+// User closes a request:
