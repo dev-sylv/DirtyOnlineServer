@@ -6,7 +6,7 @@ export interface ManagerDetails extends Document {
   users: {}[];
 }
 
-export interface UserDetails {
+export interface UserDetails extends Document {
   name: string;
   email: string;
   phoneNumber: number;
@@ -19,7 +19,7 @@ export interface UserDetails {
   station: {};
 }
 
-export interface MalamDetails {
+export interface MalamDetails extends Document {
   name: string;
   email: string;
   image: string;
@@ -30,4 +30,21 @@ export interface MalamDetails {
   dateTime: string;
   status: string;
   role: string;
+}
+
+export interface stationInterface extends Document {
+  stationName: string;
+  email: string;
+  phoneNumber: number;
+  address: string;
+  password: string;
+  users: {}[];
+  requests: {}[];
+  transactionHistory: {}[];
+  feedbacks: {}[];
+}
+
+export interface requestInterface extends Document {
+  requestMessage: string;
+  status: string;
 }
