@@ -19,7 +19,7 @@ const DirectorSchema = new Schema(
       validate: [isEmail, "Please enter a valid email"],
     },
     phoneNumber: {
-      type: Number,
+      type: String,
     },
     accountDetails: {
       type: String,
@@ -32,8 +32,8 @@ const DirectorSchema = new Schema(
       type: String,
       required: [true, "Please enter your role"],
       message: "You can be either User or Manager",
-      enum: ["User", "Manager"],
-      default: "Manager",
+      enum: ["User", "Director"],
+      default: "Director",
     },
     stations: [
       {
