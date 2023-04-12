@@ -50,7 +50,7 @@ export const UsersRegistration = AsyncHandler(
     } else {
       next(
         new MainAppError({
-          message: "Could not register user",
+          message: "Station not found, Could not register user",
           httpcode: HTTPCODES.BAD_REQUEST,
         })
       );
@@ -131,9 +131,11 @@ export const GetSingleUser = AsyncHandler(
 // User makes a request:
 export const UserMakesARequest = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    // Get the user:
     const getUser = await UserModels.findById(req.params.userID);
 
     if (getUser) {
+      // If user can still make requests
       if (getUser!.numberOfRequests <= 4) {
         const GetUserStation = getUser?.station;
         // User makes the requests:
@@ -142,24 +144,62 @@ export const UserMakesARequest = AsyncHandler(
           requestMessage: `${getUser?.name} who resides at ${getUser?.address} made a request by ${Time} for a waste disposal`,
           requestStatus: true,
         });
-        // Check if user stations is in all the stations
-        const CheckUserStation = await StationModels.findOne({
-          GetUserStation,
-        });
         // Get the station the user is apportioned to and push the created request into it:
         getUser?.makeRequests.push(
           new mongoose.Types.ObjectId(DisposewasteRequests?._id)
         );
         getUser?.save();
-      } else {
-        return res.status(HTTPCODES.BAD_REQUEST).json({
-          message: "You can't make any other requests till next month",
+
+        // Check if user station is in all the stations we have in the database
+        const CheckUserStation = await StationModels.findOne({
+          GetUserStation,
         });
+        // If the station exists, push the requests to the station to notify them:
+        if (CheckUserStation) {
+          CheckUserStation?.requests.push(
+            new mongoose.Types.ObjectId(DisposewasteRequests?._id)
+          );
+
+          return res.status(HTTPCODES.OK).json({
+            message: `Dear ${getUser?.name}, your requests has been sent to your station @${GetUserStation}`,
+          });
+        } else {
+          next(
+            new MainAppError({
+              message: "This station does not exist",
+              httpcode: HTTPCODES.NOT_FOUND,
+            })
+          );
+        }
+        // Update the decrement of the user no of requests remaining:
+        const DecreaseRequests = await UserModels.findByIdAndUpdate(
+          req.params.userID,
+          {
+            numberOfRequests: getUser?.numberOfRequests - 1,
+          },
+          { new: true }
+        );
+        return res.status(HTTPCODES.OK).json({
+          message: "Request sent successfully",
+          data: DisposewasteRequests,
+          RemainingRequest: `Your requests for this month is remaining ${getUser?.numberOfRequests} `,
+          RequestData: DecreaseRequests,
+        });
+      } else {
+        next(
+          new MainAppError({
+            message: "You can't make any other requests till next month",
+            httpcode: HTTPCODES.BAD_REQUEST,
+          })
+        );
       }
     } else {
-      return res.status(HTTPCODES.NOT_FOUND).json({
-        message: "User account not found",
-      });
+      next(
+        new MainAppError({
+          message: "User account not found",
+          httpcode: HTTPCODES.BAD_REQUEST,
+        })
+      );
     }
   }
 );
