@@ -1,26 +1,22 @@
-export interface UserDetails {
+export interface ManagerDetails extends Document {
   name: string;
-  username: string;
-  email: string;
-  phoneNumber: number;
-  LGA: string;
-  address: string;
   password: string;
-  confirmPassword: string;
-  dateTime: string;
   role: string;
+  stations: {}[];
+  users: {}[];
 }
 
-export interface AgentDetails {
+export interface UserDetails {
   name: string;
   email: string;
   phoneNumber: number;
-  LGA: string;
   address: string;
   password: string;
-  confirmPassword: string;
   dateTime: string;
   role: string;
+  requests: number;
+  history: {}[];
+  station: {};
 }
 
 export interface MalamDetails {
@@ -29,10 +25,8 @@ export interface MalamDetails {
   image: string;
   uniqueID: string;
   phoneNumber: number;
-  LGA: string;
   address: string;
   password: string;
-  confirmPassword: string;
   dateTime: string;
   status: string;
   role: string;
