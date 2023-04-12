@@ -59,36 +59,28 @@ export const UsersRegistration = AsyncHandler(
 // Users Login:
 export const UsersLogin = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { email, password } = req.body;
-      if (!email)
-        next(
-          new MainAppError({
-            httpcode: HTTPCODES.BAD_REQUEST,
-            message: "Please input your email",
-          })
-        );
-      const user = await UserModels.findOne({
-        email,
-        password,
-      });
-      if (!user)
-        next(
-          new MainAppError({
-            httpcode: HTTPCODES.NOT_FOUND,
-            message: "Login failed",
-          })
-        );
-      return res.status(HTTPCODES.CREATED).json({
-        message: "Login Successfull",
-        data: user,
-      });
-    } catch (error) {
-      return res.status(HTTPCODES.BAD_REQUEST).json({
-        message: "Request failed",
-        data: error,
-      });
-    }
+    const { phoneNumber, password } = req.body;
+    if (!phoneNumber)
+      next(
+        new MainAppError({
+          httpcode: HTTPCODES.BAD_REQUEST,
+          message: "Please input your phone number",
+        })
+      );
+    const user = await UserModels.findOne({
+      phoneNumber,
+    });
+    if (!user)
+      next(
+        new MainAppError({
+          httpcode: HTTPCODES.NOT_FOUND,
+          message: "Login failed",
+        })
+      );
+    return res.status(HTTPCODES.CREATED).json({
+      message: "Login Successfull",
+      data: user,
+    });
   }
 );
 
