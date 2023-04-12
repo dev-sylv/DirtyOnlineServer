@@ -35,8 +35,8 @@ const UserSchema: Schema<UserDetails> = new Schema(
     role: {
       type: String,
       required: [true, "Please enter your role"],
-      message: "You can be either User or Manager",
-      enum: ["User", "Manager"],
+      message: "You can be either User, Malam or Manager",
+      enum: ["User", "Malam", "Manager"],
       default: "User",
     },
     station: [

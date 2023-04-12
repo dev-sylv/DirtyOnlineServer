@@ -18,12 +18,11 @@ const MalamSchema: Schema<MalamDetails> = new Schema(
       trim: true,
       validate: [isEmail, "Please enter a valid email"],
     },
-    uniqueID: {
+    image: {
       type: String,
     },
-    LGA: {
+    uniqueID: {
       type: String,
-      required: [true, "Please confirm your password"],
     },
     address: {
       type: String,
@@ -35,10 +34,6 @@ const MalamSchema: Schema<MalamDetails> = new Schema(
     password: {
       type: String,
       required: [true, "Please enter your Password"],
-    },
-    confirmPassword: {
-      type: String,
-      required: [true, "Please confirm your password"],
     },
     dateTime: {
       type: String,
