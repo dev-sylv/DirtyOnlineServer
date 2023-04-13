@@ -97,6 +97,9 @@ export const DirectorCreatesStation = AsyncHandler(
       transactionHistory: [],
       feedbacks: [],
     });
+    await DirectorModels.updateOne(req.params.directorID, {
+      $push: { stations: Station },
+    });
     if (!Station) {
       next(
         new MainAppError({
