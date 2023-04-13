@@ -1,10 +1,10 @@
 import mongoose, { Schema, model } from "mongoose";
 
-import { AgentDetails } from "../Interfaces/AllInterfaces";
+// import { AgentDetails } from "../Interfaces/AllInterfaces";
 
 import isEmail from "validator/lib/isEmail";
 
-const AgentSchema: Schema<AgentDetails> = new Schema(
+const AgentSchema: Schema = new Schema(
   {
     name: {
       type: String,
@@ -53,6 +53,6 @@ const AgentSchema: Schema<AgentDetails> = new Schema(
   }
 );
 
-const AgentModels = model<AgentDetails>("Agents", AgentSchema);
+const AgentModels = model("Agents", AgentSchema);
 
 export default AgentModels;
