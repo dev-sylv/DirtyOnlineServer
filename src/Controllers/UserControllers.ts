@@ -35,7 +35,7 @@ export const UsersRegistration = AsyncHandler(
         address,
         phoneNumber,
         password: hashedPassword,
-        station: FindStation,
+        stationName: FindStation,
         numberOfRequests: 4,
       });
 
@@ -76,13 +76,24 @@ export const UsersLogin = AsyncHandler(
       next(
         new MainAppError({
           httpcode: HTTPCODES.NOT_FOUND,
-          message: "Login failed",
+          message: "Invalid account",
         })
       );
-    return res.status(HTTPCODES.CREATED).json({
-      message: "Login Successfull",
-      data: user,
-    });
+    const CheckPassword = await bcrypt.compare(password, user!.password);
+
+    if (CheckPassword) {
+      return res.status(HTTPCODES.CREATED).json({
+        message: "Login Successfull",
+        data: user,
+      });
+    } else {
+      next(
+        new MainAppError({
+          httpcode: HTTPCODES.NOT_FOUND,
+          message: "Phone number or password not correct",
+        })
+      );
+    }
   }
 );
 

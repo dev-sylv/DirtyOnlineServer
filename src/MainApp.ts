@@ -18,7 +18,7 @@ export const AppConfig = (app: Application) => {
 
   // Configuring the routes:
   app.use("/api/agents", AgentRouter);
-  app.use("api/users", UserRouter);
+  app.use("/api/users", UserRouter);
   app.use("api/malams", MalamRouter);
 
   app.all("*", (req: Request, res: Response, next: NextFunction) => {
