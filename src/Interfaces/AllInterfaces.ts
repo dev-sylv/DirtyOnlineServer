@@ -1,7 +1,7 @@
 export interface ManagerDetails extends Document {
   name: string;
   email: string;
-  phoneNumber: string;
+  phoneNumber: number;
   accountDetails: string;
   password: string;
   role: string;

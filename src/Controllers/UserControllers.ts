@@ -6,6 +6,7 @@ import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
 import StationModels from "../Models/StationModels";
 import RequestModels from "../Models/RequestModels";
 import mongoose from "mongoose";
+import DirectorModels from "../Models/ManagerModels";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
@@ -27,7 +28,6 @@ export const UsersRegistration = AsyncHandler(
     }
 
     const FindStation = await StationModels.findOne({ stationName });
-
     if (FindStation) {
       const users = await UserModels.create({
         name,
@@ -35,14 +35,13 @@ export const UsersRegistration = AsyncHandler(
         address,
         phoneNumber,
         password: hashedPassword,
-        stationName: FindStation,
+        station: FindStation,
         numberOfRequests: 4,
       });
 
-      await StationModels.updateOne(
-        { id: FindStation._id },
-        { $push: { users: users } }
-      );
+      FindStation?.users.push(new mongoose.Types.ObjectId(users?._id));
+      FindStation?.save();
+
       return res.status(201).json({
         message: "Successfully created User",
         data: users,

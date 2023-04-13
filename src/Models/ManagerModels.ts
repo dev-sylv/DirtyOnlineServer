@@ -19,7 +19,7 @@ const DirectorSchema = new Schema(
       validate: [isEmail, "Please enter a valid email"],
     },
     phoneNumber: {
-      type: String,
+      type: Number,
     },
     accountDetails: {
       type: String,
