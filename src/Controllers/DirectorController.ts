@@ -13,6 +13,7 @@ export const DirectorRegistration = AsyncHandler(
     const { name, email, phoneNumber, password } = req.body;
 
     const GetAllUsers = await UserModels.find();
+
     const GetAllStations = await StationModels.find();
 
     const salt = await bcrypt.genSalt(10);
@@ -66,7 +67,11 @@ export const DirectorLogin = AsyncHandler(
     const Director = await DirectorModels.findOne({
       email,
       name,
-    });
+    }).populate([
+      {
+        path: "users",
+      },
+    ]);
     if (!Director)
       next(
         new MainAppError({
