@@ -13,7 +13,7 @@ export interface ManagerDetails extends Document {
 export interface UserDetails extends Document {
   name: string;
   email: string;
-  phoneNumber: number;
+  phoneNumber: string;
   address: string;
   password: string;
   dateTime: string;
@@ -40,7 +40,7 @@ export interface MalamDetails extends Document {
 }
 
 export interface stationInterface extends Document {
-  stationName: string;
+  station: string;
   email: string;
   phoneNumber: number;
   address: string;

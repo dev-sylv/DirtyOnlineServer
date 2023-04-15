@@ -38,7 +38,7 @@ export const StationCreatesMalam = AsyncHandler(
       return res.status(201).json({
         message: "Malam Successfully Registered",
         data: registerMalam,
-        stationName: station.stationName,
+        stationName: station.station,
       });
     } else {
       next(

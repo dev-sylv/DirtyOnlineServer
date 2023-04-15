@@ -6,9 +6,9 @@ import isEmail from "validator/lib/isEmail";
 
 const StationSchema = new Schema(
   {
-    stationName: {
+    station: {
       type: String,
-      required: [true, "Please enter your name"],
+      required: [true, "Please enter your  station name"],
     },
     email: {
       type: String,

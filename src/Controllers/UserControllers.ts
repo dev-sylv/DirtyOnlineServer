@@ -10,8 +10,7 @@ import mongoose from "mongoose";
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
-    const { name, address, email, password, phoneNumber, stationName } =
-      req.body;
+    const { name, address, email, password, stationName } = req.body;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -27,14 +26,13 @@ export const UsersRegistration = AsyncHandler(
       );
     }
 
-    const FindStation = await StationModels.findOne({ stationName });
+    const FindStation = await StationModels.findOne({ station: stationName });
     if (FindStation) {
       const users = await UserModels.create({
         name,
         email,
         role: "User",
         address,
-        phoneNumber,
         password: hashedPassword,
         station: FindStation,
         numberOfRequests: 4,
@@ -158,13 +156,12 @@ export const GetSingleUser = AsyncHandler(
 export const UserMakesARequest = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Get the user:
-    const getUser = await UserModels.findById(req.params.userID).populate({
-      path: "station",
-      options: {
-        createdAt: -1,
-      },
-    });
-    const GetUserStation: any = getUser?.station;
+    const getUser = await UserModels.findById(req.params.userID)
+      .populate("station")
+      .populate("makeRequests");
+    const GetUserStation = getUser?.station;
+
+    const getStation = await StationModels.findById(req.params.stationId);
 
     if (getUser) {
       // Check if user station is in all the stations we have in the database
@@ -184,9 +181,10 @@ export const UserMakesARequest = AsyncHandler(
           getUser?.save();
 
           // If the station exists, push the requests to the station to notify them:
-          GetUserStation?.requests.push(
+          getStation?.requests.push(
             new mongoose.Types.ObjectId(DisposewasteRequests?._id)
           );
+          getStation?.save();
 
           // Update the decrement of the user no of requests remaining:
           const DecreaseRequests = await UserModels.findByIdAndUpdate(
@@ -202,7 +200,7 @@ export const UserMakesARequest = AsyncHandler(
             data: DisposewasteRequests,
             RemainingRequest: `Your requests for this month is remaining ${DecreaseRequests?.numberOfRequests}`,
             RequestData: DecreaseRequests,
-            RequestNotification: `Dear ${getUser?.name}, your requests has been sent to your station @${GetUserStation?.stationName}`,
+            RequestNotification: `Dear ${getUser?.name}, your requests has been sent to your station @${getStation?.station}`,
           });
         } else {
           // If the no of request is more than 4

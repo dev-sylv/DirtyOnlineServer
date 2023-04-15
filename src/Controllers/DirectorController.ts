@@ -89,10 +89,10 @@ export const DirectorLogin = AsyncHandler(
 // Director Creates stations:
 export const DirectorCreatesStation = AsyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
-    const { stationName, email, phoneNumber, address, password } = req.body;
+    const { station, email, phoneNumber, address, password } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    if (!stationName || !email) {
+    if (!station || !email) {
       next(
         new MainAppError({
           message: "Please provide neccessary credentials",
@@ -102,7 +102,7 @@ export const DirectorCreatesStation = AsyncHandler(
     }
     const director = await DirectorModels.findById(req.params.directorID);
     const Station = await StationModels.create({
-      stationName,
+      station,
       email,
       phoneNumber,
       address,

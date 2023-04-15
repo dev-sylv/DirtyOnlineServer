@@ -31,6 +31,6 @@ UserRouter.route("/getuser").get(GetAllUsers);
 UserRouter.route("/getuser/:userID").get(GetSingleUser);
 
 // User makes a request:
-UserRouter.route("/make-request/:userID").post(UserMakesARequest);
+UserRouter.route("/make-request/:userID/:stationId").post(UserMakesARequest);
 
 export default UserRouter;
