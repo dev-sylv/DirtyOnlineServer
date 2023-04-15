@@ -47,6 +47,12 @@ const StationSchema = new Schema(
         ref: "Transaction Histories",
       },
     ],
+    malams: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Malams",
+      },
+    ],
     feedbacks: [
       {
         type: String,

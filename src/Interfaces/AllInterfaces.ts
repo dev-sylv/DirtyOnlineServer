@@ -48,6 +48,7 @@ export interface stationInterface extends Document {
   users: {}[];
   requests: {}[];
   transactionHistory: {}[];
+  malams: {}[];
   feedbacks: string[];
 }
 

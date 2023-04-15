@@ -26,7 +26,6 @@ const MalamSchema: Schema<MalamDetails> = new Schema(
     },
     address: {
       type: String,
-      required: [true, "Please confirm your password"],
     },
     phoneNumber: {
       type: Number,
@@ -48,8 +47,8 @@ const MalamSchema: Schema<MalamDetails> = new Schema(
     role: {
       type: String,
       required: [true, "Please enter your role"],
-      message: "You can be either User, Malam or Agents",
-      enum: ["User", "Malam", "Agent"],
+      message: "You can be either User or Malam",
+      enum: ["User", "Malam"],
       default: "Malam",
     },
   },

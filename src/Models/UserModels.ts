@@ -20,7 +20,6 @@ const UserSchema: Schema<UserDetails> = new Schema(
     },
     phoneNumber: {
       type: Number,
-      unique: true,
     },
     address: {
       type: String,
