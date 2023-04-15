@@ -32,10 +32,10 @@ UserRouter.route("/getuser").get(GetAllUsers);
 UserRouter.route("/getuser/:userID").get(GetSingleUser);
 
 // User makes a request:
-UserRouter.route("/make-request/:userID/:stationID").post(UserMakesARequest);
+UserRouter.route("/make-request/:userID/:stationID").patch(UserMakesARequest);
 
 //User closes Request
-UserRouter.route("/close-request/:requestID/:malamID").patch(
+UserRouter.route("/close-request/:malamID/:requestID/:stationID").patch(
   UserClosesARequest
 );
 

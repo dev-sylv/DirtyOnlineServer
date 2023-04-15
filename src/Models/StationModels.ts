@@ -55,7 +55,8 @@ const StationSchema = new Schema(
     ],
     feedbacks: [
       {
-        type: String,
+        type: mongoose.Types.ObjectId,
+        ref: "Requests",
       },
     ],
   },

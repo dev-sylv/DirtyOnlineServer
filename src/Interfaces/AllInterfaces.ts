@@ -49,7 +49,7 @@ export interface stationInterface extends Document {
   requests: {}[];
   transactionHistory: {}[];
   malams: {}[];
-  feedbacks: string[];
+  feedbacks: {}[];
 }
 
 export interface requestInterface extends Document {

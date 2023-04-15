@@ -240,9 +240,12 @@ export const UserClosesARequest = AsyncHandler(
     );
     //get the malam assigned to it
     const assignedMalam = await MalamModels.findById(req.params.malamID);
+    //get the station
+    const TheStation = await StationModels.findById(req.params.stationID);
+
     //check if the request exists
     if (theRequestToClose) {
-      await RequestModels.findByIdAndUpdate(
+      const ClosedRequest = await RequestModels.findByIdAndUpdate(
         theRequestToClose?._id,
         {
           requestMessage: `This request has been carried out by ${assignedMalam?.name}`,
@@ -250,6 +253,11 @@ export const UserClosesARequest = AsyncHandler(
         },
         { new: true }
       );
+
+      TheStation?.feedbacks.push(
+        new mongoose.Types.ObjectId(ClosedRequest?._id)
+      );
+
       await MalamModels.findByIdAndUpdate(
         assignedMalam?._id,
         { status: "Free" },
@@ -257,13 +265,13 @@ export const UserClosesARequest = AsyncHandler(
       );
       return res.status(200).json({
         message: "Request Closed Successfully",
-        data1: theRequestToClose,
-        data2: assignedMalam,
+        RequestData: theRequestToClose,
+        MalamData: assignedMalam,
       });
     } else {
       next(
         new MainAppError({
-          message: "request not found",
+          message: "Request not found",
           httpcode: HTTPCODES.NOT_FOUND,
         })
       );
