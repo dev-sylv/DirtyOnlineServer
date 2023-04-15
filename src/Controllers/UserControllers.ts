@@ -6,12 +6,12 @@ import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
 import StationModels from "../Models/StationModels";
 import RequestModels from "../Models/RequestModels";
 import mongoose from "mongoose";
+import MalamModels from "../Models/MalamModels";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
-    const { name, address, email, password, phoneNumber, stationName } =
-      req.body;
+    const { name, address, email, password, stationName } = req.body;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -27,14 +27,13 @@ export const UsersRegistration = AsyncHandler(
       );
     }
 
-    const FindStation = await StationModels.findOne({ stationName });
+    const FindStation = await StationModels.findOne({ station: stationName });
     if (FindStation) {
       const users = await UserModels.create({
         name,
         email,
         role: "User",
         address,
-        phoneNumber,
         password: hashedPassword,
         station: FindStation,
         numberOfRequests: 4,
@@ -158,17 +157,15 @@ export const GetSingleUser = AsyncHandler(
 export const UserMakesARequest = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Get the user:
-    const getUser = await UserModels.findById(req.params.userID).populate({
-      path: "station",
-      options: {
-        createdAt: -1,
-      },
-    });
-    const GetUserStation: any = getUser?.station;
+    const getUser = await UserModels.findById(req.params.userID)
+      .populate("station")
+      .populate("makeRequests");
+
+    const getStation = await StationModels.findById(req.params.stationID);
 
     if (getUser) {
       // Check if user station is in all the stations we have in the database
-      if (GetUserStation) {
+      if (getStation) {
         // If user can still make requests
         if (getUser!.numberOfRequests > 0) {
           // User makes the requests:
@@ -184,9 +181,10 @@ export const UserMakesARequest = AsyncHandler(
           getUser?.save();
 
           // If the station exists, push the requests to the station to notify them:
-          GetUserStation?.requests.push(
+          getStation?.requests.push(
             new mongoose.Types.ObjectId(DisposewasteRequests?._id)
           );
+          getStation?.save();
 
           // Update the decrement of the user no of requests remaining:
           const DecreaseRequests = await UserModels.findByIdAndUpdate(
@@ -197,12 +195,12 @@ export const UserMakesARequest = AsyncHandler(
             { new: true }
           );
           return res.status(HTTPCODES.OK).json({
-            Station: GetUserStation,
+            Station: getStation,
             message: "Request sent successfully",
             data: DisposewasteRequests,
             RemainingRequest: `Your requests for this month is remaining ${DecreaseRequests?.numberOfRequests}`,
             RequestData: DecreaseRequests,
-            RequestNotification: `Dear ${getUser?.name}, your requests has been sent to your station @${GetUserStation?.stationName}`,
+            RequestNotification: `Dear ${getUser?.name}, your requests has been sent to your station @${getStation?.station}`,
           });
         } else {
           // If the no of request is more than 4
@@ -234,3 +232,49 @@ export const UserMakesARequest = AsyncHandler(
 );
 
 // User closes a request:
+export const UserClosesARequest = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    //get the request to be closed
+    const theRequestToClose = await RequestModels.findById(
+      req.params.requestID
+    );
+    //get the malam assigned to it
+    const assignedMalam = await MalamModels.findById(req.params.malamID);
+    //get the station
+    const TheStation = await StationModels.findById(req.params.stationID);
+
+    //check if the request exists
+    if (theRequestToClose) {
+      const ClosedRequest = await RequestModels.findByIdAndUpdate(
+        theRequestToClose?._id,
+        {
+          requestMessage: `This request has been carried out by ${assignedMalam?.name}`,
+          requestStatus: false,
+        },
+        { new: true }
+      );
+
+      TheStation?.feedbacks.push(
+        new mongoose.Types.ObjectId(ClosedRequest?._id)
+      );
+
+      await MalamModels.findByIdAndUpdate(
+        assignedMalam?._id,
+        { status: "Free" },
+        { new: true }
+      );
+      return res.status(200).json({
+        message: "Request Closed Successfully",
+        RequestData: theRequestToClose,
+        MalamData: assignedMalam,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "Request not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);

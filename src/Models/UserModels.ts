@@ -19,7 +19,7 @@ const UserSchema: Schema<UserDetails> = new Schema(
       validate: [isEmail, "Please enter a valid email"],
     },
     phoneNumber: {
-      type: Number,
+      type: String,
     },
     address: {
       type: String,

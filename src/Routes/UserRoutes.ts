@@ -8,6 +8,7 @@ import {
 import {
   GetAllUsers,
   GetSingleUser,
+  UserClosesARequest,
   UserMakesARequest,
   UsersLogin,
   UsersRegistration,
@@ -31,6 +32,11 @@ UserRouter.route("/getuser").get(GetAllUsers);
 UserRouter.route("/getuser/:userID").get(GetSingleUser);
 
 // User makes a request:
-UserRouter.route("/make-request/:userID").post(UserMakesARequest);
+UserRouter.route("/make-request/:userID/:stationID").patch(UserMakesARequest);
+
+//User closes Request
+UserRouter.route("/close-request/:malamID/:requestID/:stationID").patch(
+  UserClosesARequest
+);
 
 export default UserRouter;

@@ -6,9 +6,9 @@ import isEmail from "validator/lib/isEmail";
 
 const StationSchema = new Schema(
   {
-    stationName: {
+    station: {
       type: String,
-      required: [true, "Please enter your name"],
+      required: [true, "Please enter your  station name"],
     },
     email: {
       type: String,
@@ -55,7 +55,8 @@ const StationSchema = new Schema(
     ],
     feedbacks: [
       {
-        type: String,
+        type: mongoose.Types.ObjectId,
+        ref: "Requests",
       },
     ],
   },
