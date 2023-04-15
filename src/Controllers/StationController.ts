@@ -6,6 +6,7 @@ import otpgenerator from "otp-generator";
 import bcrypt from "bcrypt";
 import { HTTPCODES, MainAppError } from "../Utils/MainAppError";
 import mongoose from "mongoose";
+import RequestModels from "../Models/RequestModels";
 
 // Station create malams:
 export const StationCreatesMalam = AsyncHandler(
@@ -51,3 +52,36 @@ export const StationCreatesMalam = AsyncHandler(
 );
 
 // Station assigns malams:
+export const StationAssignMalam = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // Pick the station and malam you want to assign the task to:
+    const { malamID, stationID, CurrentrequestID } = req.params;
+
+    // To get the assigned station
+    const Station = await StationModels.findById(stationID);
+    // To get the assigned malam
+    const AssignedMalam = await MalamModels.findById(malamID);
+    // To get the current reques
+    const CurrentRequest = await RequestModels.findById(CurrentrequestID);
+
+    if (Station) {
+      if (AssignedMalam?.status === "Free") {
+        if (Station?.requests) {
+          const RequestDone = await MalamModels.findByIdAndUpdate;
+        } else {
+          res.status(HTTPCODES.NOT_FOUND).json({
+            message: "No requests was sent to this station",
+          });
+        }
+      } else {
+        res.status(HTTPCODES.NOT_FOUND).json({
+          message: "Malam not found - Malam on duty",
+        });
+      }
+    } else {
+      res.status(HTTPCODES.NOT_FOUND).json({
+        message: "Station not found",
+      });
+    }
+  }
+);
