@@ -162,18 +162,13 @@ export const UserMakesARequest = AsyncHandler(
         createdAt: -1,
       },
     });
-    const GetUserStation = getUser?.station;
-    console.log("User station: ", GetUserStation);
+    const GetUserStation: any = getUser?.station;
 
     if (getUser) {
       // Check if user station is in all the stations we have in the database
-      const CheckUserStation = await StationModels.findOne({
-        GetUserStation,
-      });
-
-      if (CheckUserStation) {
+      if (GetUserStation) {
         // If user can still make requests
-        if (getUser!.numberOfRequests <= 4) {
+        if (getUser!.numberOfRequests > 0) {
           // User makes the requests:
           const Time = new Date().toString();
           const DisposewasteRequests = await RequestModels.create({
@@ -187,7 +182,7 @@ export const UserMakesARequest = AsyncHandler(
           getUser?.save();
 
           // If the station exists, push the requests to the station to notify them:
-          CheckUserStation?.requests.push(
+          GetUserStation?.requests.push(
             new mongoose.Types.ObjectId(DisposewasteRequests?._id)
           );
 
@@ -202,9 +197,9 @@ export const UserMakesARequest = AsyncHandler(
           return res.status(HTTPCODES.OK).json({
             message: "Request sent successfully",
             data: DisposewasteRequests,
-            RemainingRequest: `Your requests for this month is remaining ${getUser?.numberOfRequests} `,
+            RemainingRequest: `Your requests for this month is remaining ${DecreaseRequests?.numberOfRequests}`,
             RequestData: DecreaseRequests,
-            RequestNotification: `Dear ${getUser?.name}, your requests has been sent to your station @${GetUserStation}`,
+            RequestNotification: `Dear ${getUser?.name}, your requests has been sent to your station @${GetUserStation?.stationName}`,
           });
         } else {
           // If the no of request is more than 4
@@ -217,6 +212,7 @@ export const UserMakesARequest = AsyncHandler(
         }
       } else {
         next(
+          // If station does not exist
           new MainAppError({
             message: "This station does not exist",
             httpcode: HTTPCODES.NOT_FOUND,
