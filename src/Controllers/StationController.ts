@@ -11,8 +11,10 @@ import mongoose from "mongoose";
 export const StationCreatesMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, phoneNumber, password } = req.body;
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+
     const station = await StationModels.findById(req.params.stationID);
     if (station) {
       const registerMalam = await MalamModels.create({
@@ -31,6 +33,7 @@ export const StationCreatesMalam = AsyncHandler(
       });
       station?.malams.push(new mongoose.Types.ObjectId(registerMalam?._id));
       station.save();
+
       return res.status(201).json({
         message: "Malam Successfully Registered",
         data: registerMalam,
