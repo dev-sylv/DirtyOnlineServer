@@ -10,7 +10,8 @@ import mongoose from "mongoose";
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
-    const { name, address, email, password, stationName } = req.body;
+    const { name, address, email, password, phoneNumber, stationName } =
+      req.body;
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -33,6 +34,7 @@ export const UsersRegistration = AsyncHandler(
         email,
         role: "User",
         address,
+        phoneNumber,
         password: hashedPassword,
         station: FindStation,
         numberOfRequests: 4,
