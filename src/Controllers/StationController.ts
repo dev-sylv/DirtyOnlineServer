@@ -67,25 +67,25 @@ export const StationAssignMalam = AsyncHandler(
     if (Station) {
       if (AssignedMalam?.status === "Free") {
         if (Station?.requests) {
-          // if (CurrentRequest) {
-          const RequestDone = await MalamModels.findByIdAndUpdate(
-            malamID,
-            {
-              status: "On-duty",
-            },
-            {
-              new: true,
-            }
-          );
-          return res.status(HTTPCODES.ACCEPTED).json({
-            message: "Task assigned successfully",
-            data: RequestDone,
-          });
-          // } else {
-          //   res.status(HTTPCODES.NOT_FOUND).json({
-          //     message: "Request not found",
-          //   });
-          // }
+          if (CurrentRequest) {
+            const RequestDone = await MalamModels.findByIdAndUpdate(
+              malamID,
+              {
+                status: "On-duty",
+              },
+              {
+                new: true,
+              }
+            );
+            return res.status(HTTPCODES.ACCEPTED).json({
+              message: `Task assigned successfully to ${AssignedMalam?.name}`,
+              data: RequestDone,
+            });
+          } else {
+            res.status(HTTPCODES.NOT_FOUND).json({
+              message: "Request not found",
+            });
+          }
         } else {
           res.status(HTTPCODES.NOT_FOUND).json({
             message: "No requests was sent to this station",

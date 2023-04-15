@@ -6,6 +6,7 @@ import { MainAppError, HTTPCODES } from "../Utils/MainAppError";
 import StationModels from "../Models/StationModels";
 import RequestModels from "../Models/RequestModels";
 import mongoose from "mongoose";
+import MalamModels from "../Models/MalamModels";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
@@ -159,13 +160,12 @@ export const UserMakesARequest = AsyncHandler(
     const getUser = await UserModels.findById(req.params.userID)
       .populate("station")
       .populate("makeRequests");
-    const GetUserStation = getUser?.station;
 
-    const getStation = await StationModels.findById(req.params.stationId);
+    const getStation = await StationModels.findById(req.params.stationID);
 
     if (getUser) {
       // Check if user station is in all the stations we have in the database
-      if (GetUserStation) {
+      if (getStation) {
         // If user can still make requests
         if (getUser!.numberOfRequests > 0) {
           // User makes the requests:
@@ -195,7 +195,7 @@ export const UserMakesARequest = AsyncHandler(
             { new: true }
           );
           return res.status(HTTPCODES.OK).json({
-            Station: GetUserStation,
+            Station: getStation,
             message: "Request sent successfully",
             data: DisposewasteRequests,
             RemainingRequest: `Your requests for this month is remaining ${DecreaseRequests?.numberOfRequests}`,
@@ -232,3 +232,31 @@ export const UserMakesARequest = AsyncHandler(
 );
 
 // User closes a request:
+export const UserClosesARequest = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    //get the request to be closed
+    const theRequestToClose = await RequestModels.findById(
+      req.params.requestID
+    );
+    //get the malam assigned to it
+    const assignedMalam = await MalamModels.findById(req.params.malamID);
+    //check if the request exists
+    if (theRequestToClose) {
+      await RequestModels.findByIdAndUpdate(
+        theRequestToClose?._id,
+        {
+          requestMessage: `This request has been carried out by ${assignedMalam?.name}`,
+          requestStatus: false,
+        },
+        { new: true }
+      );
+    } else {
+      next(
+        new MainAppError({
+          message: "request not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);

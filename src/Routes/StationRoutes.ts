@@ -11,8 +11,8 @@ const StationRouter = express.Router();
 StationRouter.route("/registermalam/:stationID").post(StationCreatesMalam);
 
 // Station assigning tasks to malams:
-StationRouter.route("/assign-malam/:stationID/:malamID").patch(
-  StationAssignMalam
-);
+StationRouter.route(
+  "/assign-malam/:stationID/:malamID/:CurrentrequestID"
+).patch(StationAssignMalam);
 
 export default StationRouter;
