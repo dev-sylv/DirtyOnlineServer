@@ -195,6 +195,7 @@ export const UserMakesARequest = AsyncHandler(
             { new: true }
           );
           return res.status(HTTPCODES.OK).json({
+            Station: GetUserStation,
             message: "Request sent successfully",
             data: DisposewasteRequests,
             RemainingRequest: `Your requests for this month is remaining ${DecreaseRequests?.numberOfRequests}`,
