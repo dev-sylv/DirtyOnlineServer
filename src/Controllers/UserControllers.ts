@@ -250,6 +250,16 @@ export const UserClosesARequest = AsyncHandler(
         },
         { new: true }
       );
+      await MalamModels.findByIdAndUpdate(
+        assignedMalam?._id,
+        { status: "Free" },
+        { new: true }
+      );
+      return res.status(200).json({
+        message: "Request Closed Successfully",
+        data1: theRequestToClose,
+        data2: assignedMalam,
+      });
     } else {
       next(
         new MainAppError({
