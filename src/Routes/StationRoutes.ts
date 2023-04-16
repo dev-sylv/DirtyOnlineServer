@@ -1,6 +1,7 @@
 import express from "express";
 
 import {
+  GetOneMalam,
   StationAssignMalam,
   StationCreatesMalam,
 } from "../Controllers/StationController";
@@ -14,5 +15,8 @@ StationRouter.route("/registermalam/:stationID").post(StationCreatesMalam);
 StationRouter.route(
   "/assign-malam/:stationID/:malamID/:CurrentrequestID"
 ).patch(StationAssignMalam);
+
+// Get a single malam:
+StationRouter.route("/malam/:malamID").get(GetOneMalam);
 
 export default StationRouter;

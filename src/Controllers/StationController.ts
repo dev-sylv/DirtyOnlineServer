@@ -103,3 +103,25 @@ export const StationAssignMalam = AsyncHandler(
     }
   }
 );
+
+// Get a single malam:
+export const GetOneMalam = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { malamID } = req.params;
+    const Malam = await MalamModels.findById(malamID);
+
+    if (Malam) {
+      return res.status(HTTPCODES.OK).json({
+        message: `${Malam?.name} date successfully gotten`,
+        data: Malam,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "Malam not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);

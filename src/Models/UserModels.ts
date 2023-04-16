@@ -52,10 +52,10 @@ const UserSchema: Schema<UserDetails> = new Schema(
         ref: "Requests",
       },
     ],
-    history: [
+    RequestHistories: [
       {
         type: mongoose.Types.ObjectId,
-        ref: "Request Histories",
+        ref: "Requests",
       },
     ],
     transactionHistory: [

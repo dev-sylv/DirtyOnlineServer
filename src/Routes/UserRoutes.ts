@@ -35,7 +35,7 @@ UserRouter.route("/getuser/:userID").get(GetSingleUser);
 UserRouter.route("/make-request/:userID/:stationID").patch(UserMakesARequest);
 
 //User closes Request
-UserRouter.route("/close-request/:malamID/:requestID/:stationID").patch(
+UserRouter.route("/close-request/:userID/:malamID/:requestID/:stationID").patch(
   UserClosesARequest
 );
 

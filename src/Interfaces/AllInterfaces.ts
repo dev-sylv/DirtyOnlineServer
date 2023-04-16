@@ -20,7 +20,7 @@ export interface UserDetails extends Document {
   role: string;
   makeRequests: {}[];
   numberOfRequests: number;
-  history: {}[];
+  RequestHistories: {}[];
   station: {};
   transactionHistory: {}[];
   isVerified: boolean;
