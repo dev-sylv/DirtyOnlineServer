@@ -125,3 +125,45 @@ export const GetOneMalam = AsyncHandler(
     }
   }
 );
+
+// Get all stations:
+export const GetAllStations = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const AllStations = await StationModels.find();
+    if (AllStations) {
+      return res.status(HTTPCODES.OK).json({
+        message: "Successfully got all stations",
+        data: AllStations,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "No stations found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);
+
+// Get one stations:
+export const GetOneStation = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { stationID } = req.params;
+    const OneStations = await StationModels.findById(stationID);
+
+    if (OneStations) {
+      return res.status(HTTPCODES.OK).json({
+        message: `Successfully got this ${OneStations?.station}`,
+        data: OneStations,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "Station not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);
