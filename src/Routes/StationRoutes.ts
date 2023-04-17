@@ -15,7 +15,7 @@ StationRouter.route("/registermalam/:stationID").post(StationCreatesMalam);
 
 // Station assigning tasks to malams:
 StationRouter.route(
-  "/assign-malam/:stationID/:malamID/:CurrentrequestID"
+  "/assign-malam/:stationID/:userID/:malamID/:CurrentrequestID"
 ).patch(StationAssignMalam);
 
 // Get a single malam:

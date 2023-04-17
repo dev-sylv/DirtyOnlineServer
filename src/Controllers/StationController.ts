@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { HTTPCODES, MainAppError } from "../Utils/MainAppError";
 import mongoose from "mongoose";
 import RequestModels from "../Models/RequestModels";
+import UserModels from "../Models/UserModels";
 
 // Station create malams:
 export const StationCreatesMalam = AsyncHandler(
@@ -51,67 +52,114 @@ export const StationCreatesMalam = AsyncHandler(
   }
 );
 
-// Station assigns malams:
+// Station assigns malams and the :
 export const StationAssignMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Pick the station and malam you want to assign the task to:
-    const { malamID, stationID, CurrentrequestID } = req.params;
+    const { malamID, stationID, userID, CurrentrequestID } = req.params;
 
     // To get the assigned station
     const Station = await StationModels.findById(stationID);
     // To get the assigned malam
     const AssignedMalam = await MalamModels.findById(malamID);
+    // To get the user
+    const TheUser = await UserModels.findById(userID);
     // To get the current request
     const CurrentRequest = await RequestModels.findById(CurrentrequestID);
     console.log(CurrentRequest);
     if (Station) {
-      if (AssignedMalam?.status === "Free") {
-        if (Station?.requests) {
-          if (CurrentRequest) {
-            const RequestDone = await MalamModels.findByIdAndUpdate(
-              malamID,
-              {
-                status: "On-duty",
-              },
-              {
-                new: true,
-              }
-            );
-            //close automatically
-            setTimeout(async () => {
-              await RequestModels.findByIdAndUpdate(
+      if (TheUser) {
+        if (AssignedMalam?.status === "Free") {
+          if (Station?.requests) {
+            if (CurrentRequest) {
+              // For the request to update to work in progress
+              const RequestInProgress = await RequestModels.findByIdAndUpdate(
                 CurrentRequest?._id,
                 {
-                  requestMessage: `This request has been carried out by ${AssignedMalam?.name}`,
-                  requestStatus: false,
+                  requestMessage: `This request has been assigned to ${AssignedMalam?.name}`,
+                  requestStatus: true,
+                  assigned: true,
+                  Pending: `Work in Progress by ${AssignedMalam?.name}`,
                 },
                 { new: true }
               );
-              await MalamModels.findByIdAndUpdate(
-                AssignedMalam?._id,
-                { status: "Free" },
-                { new: true }
+
+              Station?.feedbacks.push(
+                new mongoose.Types.ObjectId(RequestInProgress?._id)
               );
-            }, 60000);
-            //
-            return res.status(HTTPCODES.ACCEPTED).json({
-              message: `Task assigned successfully to ${AssignedMalam?.name}`,
-              data: RequestDone,
-            });
+              TheUser?.RequestHistories.push(
+                new mongoose.Types.ObjectId(RequestInProgress?._id)
+              );
+
+              // To update the malam status to be on duty
+              const RequestDone = await MalamModels.findByIdAndUpdate(
+                malamID,
+                {
+                  status: "On-duty",
+                },
+                {
+                  new: true,
+                }
+              );
+              //Close Request automatically after 2 hrs if user doesn't close the request
+              setTimeout(async () => {
+                const ClosedRequest = await RequestModels.findByIdAndUpdate(
+                  CurrentRequest?._id,
+                  {
+                    requestMessage: `This request has been carried out by ${AssignedMalam?.name}`,
+                    requestStatus: false,
+                    assigned: true,
+                    DoneBy: `${AssignedMalam?.name}`,
+                    Pending: "Completed",
+                  },
+                  { new: true }
+                );
+
+                Station?.feedbacks.push(
+                  new mongoose.Types.ObjectId(ClosedRequest?._id)
+                );
+                TheUser?.RequestHistories.push(
+                  new mongoose.Types.ObjectId(ClosedRequest?._id)
+                );
+
+                const FreeMalam = await MalamModels.findByIdAndUpdate(
+                  AssignedMalam?._id,
+                  { status: "Free" },
+                  { new: true }
+                );
+                return res.status(200).json({
+                  message: "Request Closed Successfully",
+                  RequestData: ClosedRequest,
+                  MalamData: FreeMalam,
+                });
+              }, 120000);
+
+              return res.status(HTTPCODES.ACCEPTED).json({
+                message: `Task assigned successfully to ${AssignedMalam?.name}`,
+                data: RequestDone,
+              });
+            } else {
+              res.status(HTTPCODES.NOT_FOUND).json({
+                message: "Request not found",
+              });
+            }
           } else {
             res.status(HTTPCODES.NOT_FOUND).json({
-              message: "Request not found",
+              message: "No requests was sent to this station",
             });
           }
         } else {
           res.status(HTTPCODES.NOT_FOUND).json({
-            message: "No requests was sent to this station",
+            message: "Malam on duty",
           });
         }
       } else {
-        res.status(HTTPCODES.NOT_FOUND).json({
-          message: "Malam on duty",
-        });
+        next(
+          new MainAppError({
+            message: "Couldn't get user that made the request",
+            httpcode: HTTPCODES.NOT_FOUND,
+          })
+        );
       }
     } else {
       res.status(HTTPCODES.NOT_FOUND).json({

@@ -11,6 +11,16 @@ const RequestSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    assigned: {
+      type: Boolean,
+      default: false,
+    },
+    DoneBy: {
+      type: String,
+    },
+    Pending: {
+      type: String,
+    },
   },
   {
     timestamps: true,
