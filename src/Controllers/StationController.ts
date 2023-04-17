@@ -107,12 +107,12 @@ export const StationAssignMalam = AsyncHandler(
 // Get a single malam:
 export const GetOneMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { malamID } = req.body;
-    const Malam = await MalamModels.find();
+    const { malamID } = req.params;
+    const Malam = await MalamModels.findById(malamID);
 
     if (Malam) {
       return res.status(HTTPCODES.OK).json({
-        message: `${Malam} date successfully gotten`,
+        message: `${Malam?.name} date successfully gotten`,
         data: Malam,
       });
     } else {
