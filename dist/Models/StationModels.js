@@ -28,10 +28,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
-const UserSchema = new mongoose_1.Schema({
-    name: {
+const StationSchema = new mongoose_1.Schema({
+    station: {
         type: String,
-        required: [true, "Please enter your name"],
+        required: [true, "Please enter your  station name"],
     },
     email: {
         type: String,
@@ -42,7 +42,7 @@ const UserSchema = new mongoose_1.Schema({
         validate: [isEmail_1.default, "Please enter a valid email"],
     },
     phoneNumber: {
-        type: String,
+        type: Number,
     },
     address: {
         type: String,
@@ -52,30 +52,13 @@ const UserSchema = new mongoose_1.Schema({
         type: String,
         required: [true, "Please enter your Password"],
     },
-    dateTime: {
-        type: String,
-    },
-    role: {
-        type: String,
-        required: [true, "Please enter your role"],
-        message: "You can be either User, Malam or Manager",
-        enum: ["User", "Malam", "Manager"],
-        default: "User",
-    },
-    station: {
-        type: mongoose_1.default.Types.ObjectId,
-        ref: "Stations",
-    },
-    numberOfRequests: {
-        type: Number,
-    },
-    makeRequests: [
+    users: [
         {
             type: mongoose_1.default.Types.ObjectId,
-            ref: "Requests",
+            ref: "Users",
         },
     ],
-    RequestHistories: [
+    requests: [
         {
             type: mongoose_1.default.Types.ObjectId,
             ref: "Requests",
@@ -87,12 +70,20 @@ const UserSchema = new mongoose_1.Schema({
             ref: "Transaction Histories",
         },
     ],
-    isVerified: {
-        type: Boolean,
-        default: false,
-    },
+    malams: [
+        {
+            type: mongoose_1.default.Types.ObjectId,
+            ref: "Malams",
+        },
+    ],
+    feedbacks: [
+        {
+            type: mongoose_1.default.Types.ObjectId,
+            ref: "Requests",
+        },
+    ],
 }, {
     timestamps: true,
 });
-const UserModels = (0, mongoose_1.model)("Users", UserSchema);
-exports.default = UserModels;
+const StationModels = (0, mongoose_1.model)("Stations", StationSchema);
+exports.default = StationModels;
