@@ -234,43 +234,57 @@ export const UserMakesARequest = AsyncHandler(
 // User closes a request:
 export const UserClosesARequest = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { requestID, malamID, stationID } = req.params;
+    const { requestID, malamID, stationID, userID } = req.params;
     //get the request to be closed
     const theRequestToClose = await RequestModels.findById(requestID);
     //get the malam assigned to it
     const assignedMalam = await MalamModels.findById(malamID);
     //get the station
     const TheStation = await StationModels.findById(stationID);
+    // The user the request is being closed:
+    const TheUser = await UserModels.findById(userID);
 
     //check if the request exists
-    if (theRequestToClose) {
-      const ClosedRequest = await RequestModels.findByIdAndUpdate(
-        theRequestToClose?._id,
-        {
-          requestMessage: `This request has been carried out by ${assignedMalam?.name}`,
-          requestStatus: false,
-        },
-        { new: true }
-      );
+    if (TheUser) {
+      if (theRequestToClose) {
+        const ClosedRequest = await RequestModels.findByIdAndUpdate(
+          theRequestToClose?._id,
+          {
+            requestMessage: `This request has been carried out by ${assignedMalam?.name}`,
+            requestStatus: false,
+          },
+          { new: true }
+        );
 
-      TheStation?.feedbacks.push(
-        new mongoose.Types.ObjectId(ClosedRequest?._id)
-      );
+        TheStation?.feedbacks.push(
+          new mongoose.Types.ObjectId(ClosedRequest?._id)
+        );
+        TheUser?.RequestHistories.push(
+          new mongoose.Types.ObjectId(ClosedRequest?._id)
+        );
 
-      const FreeMalam = await MalamModels.findByIdAndUpdate(
-        assignedMalam?._id,
-        { status: "Free" },
-        { new: true }
-      );
-      return res.status(200).json({
-        message: "Request Closed Successfully",
-        RequestData: ClosedRequest,
-        MalamData: FreeMalam,
-      });
+        const FreeMalam = await MalamModels.findByIdAndUpdate(
+          assignedMalam?._id,
+          { status: "Free" },
+          { new: true }
+        );
+        return res.status(200).json({
+          message: "Request Closed Successfully",
+          RequestData: ClosedRequest,
+          MalamData: FreeMalam,
+        });
+      } else {
+        next(
+          new MainAppError({
+            message: "Request not found",
+            httpcode: HTTPCODES.NOT_FOUND,
+          })
+        );
+      }
     } else {
       next(
         new MainAppError({
-          message: "Request not found",
+          message: "User not found",
           httpcode: HTTPCODES.NOT_FOUND,
         })
       );
