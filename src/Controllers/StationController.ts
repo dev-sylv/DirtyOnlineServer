@@ -52,7 +52,7 @@ export const StationCreatesMalam = AsyncHandler(
   }
 );
 
-// Station assigns malams:
+// Station assigns malams and the :
 export const StationAssignMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Pick the station and malam you want to assign the task to:
@@ -110,6 +110,7 @@ export const StationAssignMalam = AsyncHandler(
                     requestStatus: false,
                     assigned: true,
                     DoneBy: `${AssignedMalam?.name}`,
+                    Pending: "Completed",
                   },
                   { new: true }
                 );

@@ -253,6 +253,9 @@ export const UserClosesARequest = AsyncHandler(
           {
             requestMessage: `This request has been carried out by ${assignedMalam?.name}`,
             requestStatus: false,
+            assigned: true,
+            DoneBy: `${assignedMalam?.name}`,
+            Pending: "Completed",
           },
           { new: true }
         );
