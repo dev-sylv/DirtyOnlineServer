@@ -7,6 +7,7 @@ import bcrypt from "bcrypt";
 import { HTTPCODES, MainAppError } from "../Utils/MainAppError";
 import mongoose from "mongoose";
 import RequestModels from "../Models/RequestModels";
+import UserModels from "../Models/UserModels";
 
 // Station create malams:
 export const StationCreatesMalam = AsyncHandler(
@@ -55,63 +56,87 @@ export const StationCreatesMalam = AsyncHandler(
 export const StationAssignMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Pick the station and malam you want to assign the task to:
-    const { malamID, stationID, CurrentrequestID } = req.params;
+    const { malamID, stationID, userID, CurrentrequestID } = req.params;
 
     // To get the assigned station
     const Station = await StationModels.findById(stationID);
     // To get the assigned malam
     const AssignedMalam = await MalamModels.findById(malamID);
+    // To get the user
+    const TheUser = await UserModels.findById(userID);
     // To get the current request
     const CurrentRequest = await RequestModels.findById(CurrentrequestID);
     console.log(CurrentRequest);
     if (Station) {
-      if (AssignedMalam?.status === "Free") {
-        if (Station?.requests) {
-          if (CurrentRequest) {
-            const RequestDone = await MalamModels.findByIdAndUpdate(
-              malamID,
-              {
-                status: "On-duty",
-              },
-              {
-                new: true,
-              }
-            );
-            //close automatically
-            setTimeout(async () => {
-              await RequestModels.findByIdAndUpdate(
-                CurrentRequest?._id,
+      if (TheUser) {
+        if (AssignedMalam?.status === "Free") {
+          if (Station?.requests) {
+            if (CurrentRequest) {
+              const RequestDone = await MalamModels.findByIdAndUpdate(
+                malamID,
                 {
-                  requestMessage: `This request has been carried out by ${AssignedMalam?.name}`,
-                  requestStatus: false,
+                  status: "On-duty",
                 },
-                { new: true }
+                {
+                  new: true,
+                }
               );
-              await MalamModels.findByIdAndUpdate(
-                AssignedMalam?._id,
-                { status: "Free" },
-                { new: true }
-              );
-            }, 60000);
-            //
-            return res.status(HTTPCODES.ACCEPTED).json({
-              message: `Task assigned successfully to ${AssignedMalam?.name}`,
-              data: RequestDone,
-            });
+              //Close Request automatically
+              setTimeout(async () => {
+                const ClosedRequest = await RequestModels.findByIdAndUpdate(
+                  CurrentRequest?._id,
+                  {
+                    requestMessage: `This request has been carried out by ${AssignedMalam?.name}`,
+                    requestStatus: false,
+                  },
+                  { new: true }
+                );
+
+                Station?.feedbacks.push(
+                  new mongoose.Types.ObjectId(ClosedRequest?._id)
+                );
+                TheUser?.RequestHistories.push(
+                  new mongoose.Types.ObjectId(ClosedRequest?._id)
+                );
+
+                const FreeMalam = await MalamModels.findByIdAndUpdate(
+                  AssignedMalam?._id,
+                  { status: "Free" },
+                  { new: true }
+                );
+                return res.status(200).json({
+                  message: "Request Closed Successfully",
+                  RequestData: ClosedRequest,
+                  MalamData: FreeMalam,
+                });
+              }, 60000);
+              //
+              return res.status(HTTPCODES.ACCEPTED).json({
+                message: `Task assigned successfully to ${AssignedMalam?.name}`,
+                data: RequestDone,
+              });
+            } else {
+              res.status(HTTPCODES.NOT_FOUND).json({
+                message: "Request not found",
+              });
+            }
           } else {
             res.status(HTTPCODES.NOT_FOUND).json({
-              message: "Request not found",
+              message: "No requests was sent to this station",
             });
           }
         } else {
           res.status(HTTPCODES.NOT_FOUND).json({
-            message: "No requests was sent to this station",
+            message: "Malam on duty",
           });
         }
       } else {
-        res.status(HTTPCODES.NOT_FOUND).json({
-          message: "Malam on duty",
-        });
+        next(
+          new MainAppError({
+            message: "Couldn't get user that made the request",
+            httpcode: HTTPCODES.NOT_FOUND,
+          })
+        );
       }
     } else {
       res.status(HTTPCODES.NOT_FOUND).json({
