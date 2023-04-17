@@ -17,6 +17,6 @@ StationRouter.route(
 ).patch(StationAssignMalam);
 
 // Get a single malam:
-StationRouter.route("/malam/:malamID").get(GetOneMalam);
+StationRouter.route("/malam").get(GetOneMalam);
 
 export default StationRouter;

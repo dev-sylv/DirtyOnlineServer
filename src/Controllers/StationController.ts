@@ -108,17 +108,20 @@ export const StationAssignMalam = AsyncHandler(
 export const GetOneMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { malamID } = req.body;
-    const Malam = await MalamModels.findById(malamID);
+    const Malam = await MalamModels.find();
 
     if (Malam) {
       return res.status(HTTPCODES.OK).json({
-        message: `${Malam?.name} date successfully gotten`,
+        message: `${Malam} date successfully gotten`,
         data: Malam,
       });
     } else {
-      return res.status(HTTPCODES.NOT_FOUND).json({
-        message: "Malam not found",
-      });
+      next(
+        new MainAppError({
+          message: "Malam not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
     }
   }
 );
