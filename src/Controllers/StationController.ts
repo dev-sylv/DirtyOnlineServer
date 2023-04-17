@@ -125,3 +125,23 @@ export const GetOneMalam = AsyncHandler(
     }
   }
 );
+
+// Get all stations:
+export const GetAllStations = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const AllStations = await StationModels.find();
+    if (AllStations) {
+      return res.status(HTTPCODES.OK).json({
+        message: "Successfully got all stations",
+        data: AllStations,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "No stations found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);

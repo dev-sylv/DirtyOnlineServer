@@ -1,6 +1,7 @@
 import express from "express";
 
 import {
+  GetAllStations,
   GetOneMalam,
   StationAssignMalam,
   StationCreatesMalam,
@@ -18,5 +19,8 @@ StationRouter.route(
 
 // Get a single malam:
 StationRouter.route("/malam/:malamID").get(GetOneMalam);
+
+// Get All Stations:
+StationRouter.route("/all-stations").get(GetAllStations);
 
 export default StationRouter;
