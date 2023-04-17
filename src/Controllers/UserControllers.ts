@@ -234,14 +234,13 @@ export const UserMakesARequest = AsyncHandler(
 // User closes a request:
 export const UserClosesARequest = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
+    const { requestID, malamID, stationID } = req.params;
     //get the request to be closed
-    const theRequestToClose = await RequestModels.findById(
-      req.params.requestID
-    );
+    const theRequestToClose = await RequestModels.findById(requestID);
     //get the malam assigned to it
-    const assignedMalam = await MalamModels.findById(req.params.malamID);
+    const assignedMalam = await MalamModels.findById(malamID);
     //get the station
-    const TheStation = await StationModels.findById(req.params.stationID);
+    const TheStation = await StationModels.findById(stationID);
 
     //check if the request exists
     if (theRequestToClose) {
@@ -258,15 +257,15 @@ export const UserClosesARequest = AsyncHandler(
         new mongoose.Types.ObjectId(ClosedRequest?._id)
       );
 
-      await MalamModels.findByIdAndUpdate(
+      const FreeMalam = await MalamModels.findByIdAndUpdate(
         assignedMalam?._id,
         { status: "Free" },
         { new: true }
       );
       return res.status(200).json({
         message: "Request Closed Successfully",
-        RequestData: theRequestToClose,
-        MalamData: assignedMalam,
+        RequestData: ClosedRequest,
+        MalamData: FreeMalam,
       });
     } else {
       next(
