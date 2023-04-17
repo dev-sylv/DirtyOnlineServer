@@ -173,6 +173,8 @@ export const UserMakesARequest = AsyncHandler(
           const DisposewasteRequests = await RequestModels.create({
             requestMessage: `${getUser?.name} who resides at ${getUser?.address} made a request by ${Time} for a waste disposal`,
             requestStatus: true,
+            assigned: false,
+            DoneBy: "No One",
           });
           // Get the station the user is apportioned to and push the created request into it:
           getUser?.makeRequests.push(
@@ -245,7 +247,7 @@ export const UserClosesARequest = AsyncHandler(
 
     //check if the request exists
     if (TheUser) {
-      if (theRequestToClose) {
+      if (theRequestToClose?.assigned) {
         const ClosedRequest = await RequestModels.findByIdAndUpdate(
           theRequestToClose?._id,
           {
@@ -258,9 +260,12 @@ export const UserClosesARequest = AsyncHandler(
         TheStation?.feedbacks.push(
           new mongoose.Types.ObjectId(ClosedRequest?._id)
         );
+        TheStation?.save();
+
         TheUser?.RequestHistories.push(
           new mongoose.Types.ObjectId(ClosedRequest?._id)
         );
+        TheUser?.save();
 
         const FreeMalam = await MalamModels.findByIdAndUpdate(
           assignedMalam?._id,
@@ -275,7 +280,7 @@ export const UserClosesARequest = AsyncHandler(
       } else {
         next(
           new MainAppError({
-            message: "Request not found",
+            message: "Request has not been assigned, You can't close it",
             httpcode: HTTPCODES.NOT_FOUND,
           })
         );

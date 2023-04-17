@@ -55,4 +55,7 @@ export interface stationInterface extends Document {
 export interface requestInterface extends Document {
   requestMessage: string;
   requestStatus: boolean;
+  assigned: boolean;
+  DoneBy: string;
+  Pending?: string;
 }

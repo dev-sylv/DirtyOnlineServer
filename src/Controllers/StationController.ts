@@ -72,6 +72,26 @@ export const StationAssignMalam = AsyncHandler(
         if (AssignedMalam?.status === "Free") {
           if (Station?.requests) {
             if (CurrentRequest) {
+              // For the request to update to work in progress
+              const RequestInProgress = await RequestModels.findByIdAndUpdate(
+                CurrentRequest?._id,
+                {
+                  requestMessage: `This request has been assigned to ${AssignedMalam?.name}`,
+                  requestStatus: true,
+                  assigned: true,
+                  Pending: `Work in Progress by ${AssignedMalam?.name}`,
+                },
+                { new: true }
+              );
+
+              Station?.feedbacks.push(
+                new mongoose.Types.ObjectId(RequestInProgress?._id)
+              );
+              TheUser?.RequestHistories.push(
+                new mongoose.Types.ObjectId(RequestInProgress?._id)
+              );
+
+              // To update the malam status to be on duty
               const RequestDone = await MalamModels.findByIdAndUpdate(
                 malamID,
                 {
@@ -88,6 +108,8 @@ export const StationAssignMalam = AsyncHandler(
                   {
                     requestMessage: `This request has been carried out by ${AssignedMalam?.name}`,
                     requestStatus: false,
+                    assigned: true,
+                    DoneBy: `${AssignedMalam?.name}`,
                   },
                   { new: true }
                 );
@@ -109,8 +131,8 @@ export const StationAssignMalam = AsyncHandler(
                   RequestData: ClosedRequest,
                   MalamData: FreeMalam,
                 });
-              }, 60000);
-              //
+              }, 120000);
+
               return res.status(HTTPCODES.ACCEPTED).json({
                 message: `Task assigned successfully to ${AssignedMalam?.name}`,
                 data: RequestDone,
