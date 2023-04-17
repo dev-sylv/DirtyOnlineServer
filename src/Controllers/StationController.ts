@@ -77,6 +77,23 @@ export const StationAssignMalam = AsyncHandler(
                 new: true,
               }
             );
+            //close automatically
+            setTimeout(async () => {
+              await RequestModels.findByIdAndUpdate(
+                CurrentRequest?._id,
+                {
+                  requestMessage: `This request has been carried out by ${AssignedMalam?.name}`,
+                  requestStatus: false,
+                },
+                { new: true }
+              );
+              await MalamModels.findByIdAndUpdate(
+                AssignedMalam?._id,
+                { status: "Free" },
+                { new: true }
+              );
+            }, 60000);
+            //
             return res.status(HTTPCODES.ACCEPTED).json({
               message: `Task assigned successfully to ${AssignedMalam?.name}`,
               data: RequestDone,
