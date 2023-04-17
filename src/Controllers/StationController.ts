@@ -103,3 +103,10 @@ export const StationAssignMalam = AsyncHandler(
     }
   }
 );
+
+// Get aa single malam:
+export const GetOneMalam = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { malamID } = req.body;
+  }
+);
