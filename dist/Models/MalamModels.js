@@ -18,16 +18,14 @@ const MalamSchema = new mongoose_1.Schema({
         trim: true,
         validate: [isEmail_1.default, "Please enter a valid email"],
     },
+    image: {
+        type: String,
+    },
     uniqueID: {
         type: String,
     },
-    LGA: {
-        type: String,
-        required: [true, "Please confirm your password"],
-    },
     address: {
         type: String,
-        required: [true, "Please confirm your password"],
     },
     phoneNumber: {
         type: Number,
@@ -35,10 +33,6 @@ const MalamSchema = new mongoose_1.Schema({
     password: {
         type: String,
         required: [true, "Please enter your Password"],
-    },
-    confirmPassword: {
-        type: String,
-        required: [true, "Please confirm your password"],
     },
     dateTime: {
         type: String,
@@ -53,8 +47,8 @@ const MalamSchema = new mongoose_1.Schema({
     role: {
         type: String,
         required: [true, "Please enter your role"],
-        message: "You can be either User, Malam or Agents",
-        enum: ["User", "Malam", "Agent"],
+        message: "You can be either User or Malam",
+        enum: ["User", "Malam"],
         default: "Malam",
     },
 }, {

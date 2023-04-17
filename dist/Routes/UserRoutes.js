@@ -15,4 +15,8 @@ UserRouter.route("/loginuser").post(UserValidation_1.UserLoginValidation, UserCo
 UserRouter.route("/getuser").get(UserControllers_1.GetAllUsers);
 // Get single users:
 UserRouter.route("/getuser/:userID").get(UserControllers_1.GetSingleUser);
+// User makes a request:
+UserRouter.route("/make-request/:userID/:stationID").patch(UserControllers_1.UserMakesARequest);
+//User closes Request
+UserRouter.route("/close-request/:userID/:malamID/:requestID/:stationID").patch(UserControllers_1.UserClosesARequest);
 exports.default = UserRouter;

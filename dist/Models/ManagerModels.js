@@ -28,7 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const isEmail_1 = __importDefault(require("validator/lib/isEmail"));
-const UserSchema = new mongoose_1.Schema({
+const DirectorSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: [true, "Please enter your name"],
@@ -42,57 +42,39 @@ const UserSchema = new mongoose_1.Schema({
         validate: [isEmail_1.default, "Please enter a valid email"],
     },
     phoneNumber: {
-        type: String,
+        type: Number,
     },
-    address: {
+    accountDetails: {
         type: String,
-        required: [true, "Please confirm your password"],
     },
     password: {
         type: String,
         required: [true, "Please enter your Password"],
     },
-    dateTime: {
-        type: String,
-    },
     role: {
         type: String,
         required: [true, "Please enter your role"],
-        message: "You can be either User, Malam or Manager",
-        enum: ["User", "Malam", "Manager"],
-        default: "User",
+        message: "You can be either User or Manager",
+        enum: ["User", "Director"],
+        default: "Director",
     },
-    station: {
-        type: mongoose_1.default.Types.ObjectId,
-        ref: "Stations",
-    },
-    numberOfRequests: {
-        type: Number,
-    },
-    makeRequests: [
+    stations: [
         {
             type: mongoose_1.default.Types.ObjectId,
-            ref: "Requests",
+            ref: "Stations",
         },
     ],
-    RequestHistories: [
+    users: [
         {
             type: mongoose_1.default.Types.ObjectId,
-            ref: "Requests",
-        },
-    ],
-    transactionHistory: [
-        {
-            type: mongoose_1.default.Types.ObjectId,
-            ref: "Transaction Histories",
+            ref: "Users",
         },
     ],
     isVerified: {
         type: Boolean,
-        default: false,
     },
 }, {
     timestamps: true,
 });
-const UserModels = (0, mongoose_1.model)("Users", UserSchema);
-exports.default = UserModels;
+const DirectorModels = (0, mongoose_1.model)("Director", DirectorSchema);
+exports.default = DirectorModels;

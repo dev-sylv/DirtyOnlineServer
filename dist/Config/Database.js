@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DBCONNECTION = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const EnvironmentVariables_1 = require("./EnvironmentVariables");
-const db_Url = "mongodb://localhost/DO";
+const db_Url = "mongodb://localhost/MalamOnline";
 const LIVEURI = EnvironmentVariables_1.EnvironmentVariables.MONGODB_STRING;
 const DBCONNECTION = () => __awaiter(void 0, void 0, void 0, function* () {
     try {

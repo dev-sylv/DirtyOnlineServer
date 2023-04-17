@@ -7,15 +7,14 @@ exports.UserSchemaValidation = void 0;
 const joi_1 = __importDefault(require("joi"));
 exports.UserSchemaValidation = {
     Register: joi_1.default.object({
-        Username: joi_1.default.string().required(),
-        LGA: joi_1.default.string().required(),
-        Phoneno: joi_1.default.number().required(),
+        name: joi_1.default.string().required(),
+        email: joi_1.default.string().email().required(),
         address: joi_1.default.string().required(),
         password: joi_1.default.string().min(8).required(),
-        confirmPassword: joi_1.default.string().valid(joi_1.default.ref("password")).required(),
+        stationName: joi_1.default.string().required(),
     }),
     Login: joi_1.default.object({
-        Username: joi_1.default.string().required(),
+        email: joi_1.default.string().email().required(),
         password: joi_1.default.string().min(8).required(),
     }),
 };
