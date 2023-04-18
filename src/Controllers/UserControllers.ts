@@ -378,3 +378,14 @@ export const UserMakesSpecialRequest = AsyncHandler(
     }
   }
 );
+
+// User Update their profile:
+export const UserUpdatesTheirProfile = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, phoneNumber, address, station } = req.body;
+
+    const { userID } = req.params;
+
+    const User = await UserModels.findByIdAndUpdate(userID);
+  }
+);
