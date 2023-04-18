@@ -52,6 +52,12 @@ const UserSchema: Schema<UserDetails> = new Schema(
         ref: "Requests",
       },
     ],
+    specialRequests: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "Requests",
+      },
+    ],
     RequestHistories: [
       {
         type: mongoose.Types.ObjectId,

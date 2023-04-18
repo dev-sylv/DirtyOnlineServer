@@ -328,9 +328,37 @@ export const UserMakesSpecialRequest = AsyncHandler(
 
     const getStation = await StationModels.findById(req.params.stationID);
 
+    const { address } = req.body;
+
     if (getUser) {
       // Check if user station is in all the stations we have in the database
       if (getStation) {
+        // User makes the requests:
+        const Time = new Date().toString().split("2");
+        const SpecialwasteRequests = await RequestModels.create({
+          requestMessage: `${getUser?.name} made a request by ${Time} for a waste disposal at ${address}`,
+          requestStatus: true,
+          assigned: false,
+          DoneBy: "No One",
+        });
+
+        // Get the station the user is apportioned to and push the created request into it:
+        getUser?.specialRequests.push(
+          new mongoose.Types.ObjectId(SpecialwasteRequests?._id)
+        );
+        getUser?.save();
+
+        // If the station exists, push the requests to the station to notify them:
+        getStation?.specialRequests.push(
+          new mongoose.Types.ObjectId(SpecialwasteRequests?._id)
+        );
+        getStation?.save();
+
+        return res.status(HTTPCODES.OK).json({
+          message: "Special Request sent successfully",
+          data: SpecialwasteRequests,
+          RequestNotification: `Dear ${getUser?.name}, your requests has been sent to your station @${getStation?.station}`,
+        });
       } else {
         next(
           // If station does not exist
