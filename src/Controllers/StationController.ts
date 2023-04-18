@@ -52,7 +52,7 @@ export const StationCreatesMalam = AsyncHandler(
   }
 );
 
-// Station assigns malams and the :
+// Station assigns malams and the request closing automatically:
 export const StationAssignMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     // Pick the station and malam you want to assign the task to:
@@ -132,7 +132,7 @@ export const StationAssignMalam = AsyncHandler(
                   RequestData: ClosedRequest,
                   MalamData: FreeMalam,
                 });
-              }, 120000);
+              }, 7200000);
 
               return res.status(HTTPCODES.ACCEPTED).json({
                 message: `Task assigned successfully to ${AssignedMalam?.name}`,

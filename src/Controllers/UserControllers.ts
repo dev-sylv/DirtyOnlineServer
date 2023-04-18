@@ -7,6 +7,7 @@ import StationModels from "../Models/StationModels";
 import RequestModels from "../Models/RequestModels";
 import mongoose from "mongoose";
 import MalamModels from "../Models/MalamModels";
+import cron from "node-cron";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
@@ -196,6 +197,22 @@ export const UserMakesARequest = AsyncHandler(
             },
             { new: true }
           );
+
+          //reset set requests every four weeks
+          cron.schedule("*/5 * * * *", async () => {
+            try {
+              await UserModels.findByIdAndUpdate(
+                req.params.userID,
+                {
+                  numberOfRequests: 4,
+                },
+                { new: true }
+              );
+            } catch (error) {
+              console.log("cron error:", error);
+            }
+          });
+
           return res.status(HTTPCODES.OK).json({
             message: "Request sent successfully",
             data: DisposewasteRequests,
