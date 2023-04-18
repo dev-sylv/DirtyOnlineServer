@@ -386,6 +386,31 @@ export const UserUpdatesTheirProfile = AsyncHandler(
 
     const { userID } = req.params;
 
-    const User = await UserModels.findByIdAndUpdate(userID);
+    const User = await UserModels.findById(userID);
+
+    if (User) {
+      const Update = await UserModels.findByIdAndUpdate(
+        userID,
+        {
+          email,
+          phoneNumber,
+          address,
+          station,
+        },
+        { new: true }
+      );
+
+      return res.status(HTTPCODES.OK).json({
+        message: "User profile updated successfully",
+        data: Update,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "Couldn't update",
+          httpcode: HTTPCODES.BAD_REQUEST,
+        })
+      );
+    }
   }
 );

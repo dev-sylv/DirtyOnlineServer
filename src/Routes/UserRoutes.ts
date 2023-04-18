@@ -11,6 +11,7 @@ import {
   UserClosesARequest,
   UserMakesARequest,
   UserMakesSpecialRequest,
+  UserUpdatesTheirProfile,
   UsersLogin,
   UsersRegistration,
 } from "../Controllers/UserControllers";
@@ -44,5 +45,8 @@ UserRouter.route("/close-request/:userID/:malamID/:requestID/:stationID").patch(
 UserRouter.route("/make-special-request/:userID/:stationID").patch(
   UserMakesSpecialRequest
 );
+
+// User updates their profile:
+UserRouter.route("/update-user-profile").patch(UserUpdatesTheirProfile);
 
 export default UserRouter;
