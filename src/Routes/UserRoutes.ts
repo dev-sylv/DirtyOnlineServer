@@ -47,6 +47,6 @@ UserRouter.route("/make-special-request/:userID/:stationID").patch(
 );
 
 // User updates their profile:
-UserRouter.route("/update-user-profile").patch(UserUpdatesTheirProfile);
+UserRouter.route("/update-user-profile/:userID").patch(UserUpdatesTheirProfile);
 
 export default UserRouter;
