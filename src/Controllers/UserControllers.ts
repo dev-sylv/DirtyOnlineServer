@@ -198,7 +198,7 @@ export const UserMakesARequest = AsyncHandler(
             { new: true }
           );
 
-          //reset set requests every four weeks
+          //reset requests back to 4 every four weeks
           cron.schedule("*/5 * * * *", async () => {
             try {
               await UserModels.findByIdAndUpdate(
@@ -209,7 +209,9 @@ export const UserMakesARequest = AsyncHandler(
                 { new: true }
               );
             } catch (error) {
-              console.log("cron error:", error);
+              return res.status(HTTPCODES.INTERNAL_SERVER_ERROR).json({
+                message: "Couldn't reset",
+              });
             }
           });
 
@@ -310,6 +312,39 @@ export const UserClosesARequest = AsyncHandler(
         new MainAppError({
           message: "User not found",
           httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);
+
+// User makes special request:
+export const UserMakesSpecialRequest = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // Get the user:
+    const getUser = await UserModels.findById(req.params.userID)
+      .populate("station")
+      .populate("makeRequests");
+
+    const getStation = await StationModels.findById(req.params.stationID);
+
+    if (getUser) {
+      // Check if user station is in all the stations we have in the database
+      if (getStation) {
+      } else {
+        next(
+          // If station does not exist
+          new MainAppError({
+            message: "This station does not exist",
+            httpcode: HTTPCODES.NOT_FOUND,
+          })
+        );
+      }
+    } else {
+      next(
+        new MainAppError({
+          message: "User account not found",
+          httpcode: HTTPCODES.BAD_REQUEST,
         })
       );
     }
