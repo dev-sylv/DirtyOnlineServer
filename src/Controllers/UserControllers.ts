@@ -391,37 +391,56 @@ export const UserUpdatesTheirProfile = AsyncHandler(
     // To check if the station the user wants to update to exists
     const CheckStation = await StationModels.findOne({ station: station });
 
-    // Get the user current station:
+    // Get the user current station and the array of users in the station:
     const GetUserStation = await StationModels.findById(stationID);
+    const GetUsersInStations = GetUserStation?.users;
 
+    // Once we have gotten the array of users, we want to compare the ID of users in that station to the one we want to remove from the station:
     // To delete the user from his former station:
-    const RemoveFromFormerStation = await StationModels.findByIdAndRemove(
-      GetUserStation
+
+    const GetParticularUserOutOfStation = await GetUsersInStations?.filter(
+      (el: any) => el.id !== userID
     );
+
+    console.log("***********************");
+    console.log("User id: ", userID);
     console.log("User former station: ", GetUserStation);
     console.log("User updated station: ", CheckStation);
+    console.log("All Users in stations: ", GetUsersInStations);
+    console.log("Remaining users: ", GetParticularUserOutOfStation);
 
     if (User) {
-      if (RemoveFromFormerStation) {
-        const Update = await UserModels.findByIdAndUpdate(
-          userID,
-          {
-            email,
-            phoneNumber,
-            address,
-            station: CheckStation,
-          },
-          { new: true }
-        );
+      if (GetParticularUserOutOfStation) {
+        if (CheckStation) {
+          const Update = await UserModels.findByIdAndUpdate(
+            userID,
+            {
+              email,
+              phoneNumber,
+              address,
+              station: CheckStation,
+            },
+            { new: true }
+          );
+          CheckStation?.users.push(new mongoose.Types.ObjectId(Update?._id));
+          CheckStation?.save();
 
-        return res.status(HTTPCODES.OK).json({
-          message: "User profile updated successfully",
-          data: Update,
-        });
+          return res.status(HTTPCODES.OK).json({
+            message: "User profile updated successfully",
+            data: Update,
+          });
+        } else {
+          next(
+            new MainAppError({
+              message: "Station you want to update to not available",
+              httpcode: HTTPCODES.BAD_REQUEST,
+            })
+          );
+        }
       } else {
         next(
           new MainAppError({
-            message: "Station you want to update to not available",
+            message: "You've not been removed from former station",
             httpcode: HTTPCODES.BAD_REQUEST,
           })
         );
