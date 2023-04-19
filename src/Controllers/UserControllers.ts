@@ -384,26 +384,48 @@ export const UserUpdatesTheirProfile = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, phoneNumber, address, station } = req.body;
 
-    const { userID } = req.params;
+    const { userID, stationID } = req.params;
 
     const User = await UserModels.findById(userID);
 
-    if (User) {
-      const Update = await UserModels.findByIdAndUpdate(
-        userID,
-        {
-          email,
-          phoneNumber,
-          address,
-          station,
-        },
-        { new: true }
-      );
+    // To check if the station the user wants to update to exists
+    const CheckStation = await StationModels.findOne({ station: station });
 
-      return res.status(HTTPCODES.OK).json({
-        message: "User profile updated successfully",
-        data: Update,
-      });
+    // Get the user current station:
+    const GetUserStation = await StationModels.findById(stationID);
+
+    // To delete the user from his former station:
+    const RemoveFromFormerStation = await StationModels.findByIdAndRemove(
+      GetUserStation
+    );
+    console.log("User former station: ", GetUserStation);
+    console.log("User updated station: ", CheckStation);
+
+    if (User) {
+      if (RemoveFromFormerStation) {
+        const Update = await UserModels.findByIdAndUpdate(
+          userID,
+          {
+            email,
+            phoneNumber,
+            address,
+            station: CheckStation,
+          },
+          { new: true }
+        );
+
+        return res.status(HTTPCODES.OK).json({
+          message: "User profile updated successfully",
+          data: Update,
+        });
+      } else {
+        next(
+          new MainAppError({
+            message: "Station you want to update to not available",
+            httpcode: HTTPCODES.BAD_REQUEST,
+          })
+        );
+      }
     } else {
       next(
         new MainAppError({
