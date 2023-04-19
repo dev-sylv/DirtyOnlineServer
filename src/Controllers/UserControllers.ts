@@ -7,6 +7,7 @@ import StationModels from "../Models/StationModels";
 import RequestModels from "../Models/RequestModels";
 import mongoose from "mongoose";
 import MalamModels from "../Models/MalamModels";
+import cron from "node-cron";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
@@ -196,6 +197,24 @@ export const UserMakesARequest = AsyncHandler(
             },
             { new: true }
           );
+
+          //reset requests back to 4 every four weeks
+          cron.schedule("*/5 * * * *", async () => {
+            try {
+              await UserModels.findByIdAndUpdate(
+                req.params.userID,
+                {
+                  numberOfRequests: 4,
+                },
+                { new: true }
+              );
+            } catch (error) {
+              return res.status(HTTPCODES.INTERNAL_SERVER_ERROR).json({
+                message: "Couldn't reset",
+              });
+            }
+          });
+
           return res.status(HTTPCODES.OK).json({
             message: "Request sent successfully",
             data: DisposewasteRequests,
@@ -293,6 +312,144 @@ export const UserClosesARequest = AsyncHandler(
         new MainAppError({
           message: "User not found",
           httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);
+
+// User makes special request:
+export const UserMakesSpecialRequest = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    // Get the user:
+    const getUser = await UserModels.findById(req.params.userID)
+      .populate("station")
+      .populate("makeRequests");
+
+    const getStation = await StationModels.findById(req.params.stationID);
+
+    const { address } = req.body;
+
+    if (getUser) {
+      // Check if user station is in all the stations we have in the database
+      if (getStation) {
+        // User makes the requests:
+        const Time = new Date().toString().split("2");
+        const SpecialwasteRequests = await RequestModels.create({
+          requestMessage: `${getUser?.name} made a request by ${Time} for a waste disposal at ${address}`,
+          requestStatus: true,
+          assigned: false,
+          DoneBy: "No One",
+        });
+
+        // Get the station the user is apportioned to and push the created request into it:
+        getUser?.specialRequests.push(
+          new mongoose.Types.ObjectId(SpecialwasteRequests?._id)
+        );
+        getUser?.save();
+
+        // If the station exists, push the requests to the station to notify them:
+        getStation?.specialRequests.push(
+          new mongoose.Types.ObjectId(SpecialwasteRequests?._id)
+        );
+        getStation?.save();
+
+        return res.status(HTTPCODES.OK).json({
+          message: "Special Request sent successfully",
+          data: SpecialwasteRequests,
+          RequestNotification: `Dear ${getUser?.name}, your requests has been sent to your station @${getStation?.station}`,
+        });
+      } else {
+        next(
+          // If station does not exist
+          new MainAppError({
+            message: "This station does not exist",
+            httpcode: HTTPCODES.NOT_FOUND,
+          })
+        );
+      }
+    } else {
+      next(
+        new MainAppError({
+          message: "User account not found",
+          httpcode: HTTPCODES.BAD_REQUEST,
+        })
+      );
+    }
+  }
+);
+
+// User Update their profile:
+export const UserUpdatesTheirProfile = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, phoneNumber, address, station } = req.body;
+
+    const { userID, stationID } = req.params;
+
+    const User = await UserModels.findById(userID);
+
+    // To check if the station the user wants to update to exists
+    const CheckStation = await StationModels.findOne({ station: station });
+
+    // Get the user current station and the array of users in the station:
+    const GetUserStation = await StationModels.findById(stationID);
+    const GetUsersInStations = GetUserStation?.users;
+
+    // Once we have gotten the array of users, we want to compare the ID of users in that station to the one we want to remove from the station:
+    // To delete the user from his former station:
+
+    const GetParticularUserOutOfStation = await GetUsersInStations?.filter(
+      (el: any) => el.id !== userID
+    );
+
+    console.log("***********************");
+    console.log("User id: ", userID);
+    console.log("User former station: ", GetUserStation);
+    console.log("User updated station: ", CheckStation);
+    console.log("All Users in stations: ", GetUsersInStations);
+    console.log("Remaining users: ", GetParticularUserOutOfStation);
+
+    if (User) {
+      if (GetParticularUserOutOfStation) {
+        if (CheckStation) {
+          const Update = await UserModels.findByIdAndUpdate(
+            userID,
+            {
+              email,
+              phoneNumber,
+              address,
+              station: CheckStation,
+            },
+            { new: true }
+          );
+          CheckStation?.users.push(new mongoose.Types.ObjectId(Update?._id));
+          CheckStation?.save();
+
+          return res.status(HTTPCODES.OK).json({
+            message: "User profile updated successfully",
+            data: Update,
+          });
+        } else {
+          next(
+            new MainAppError({
+              message: "Station you want to update to not available",
+              httpcode: HTTPCODES.BAD_REQUEST,
+            })
+          );
+        }
+      } else {
+        next(
+          new MainAppError({
+            message: "You've not been removed from former station",
+            httpcode: HTTPCODES.BAD_REQUEST,
+          })
+        );
+      }
+    } else {
+      next(
+        new MainAppError({
+          message: "Couldn't update",
+          httpcode: HTTPCODES.BAD_REQUEST,
         })
       );
     }

@@ -19,6 +19,7 @@ export interface UserDetails extends Document {
   dateTime: string;
   role: string;
   makeRequests: {}[];
+  specialRequests: {}[];
   numberOfRequests: number;
   RequestHistories: {}[];
   station: {};
@@ -47,6 +48,7 @@ export interface stationInterface extends Document {
   password: string;
   users: {}[];
   requests: {}[];
+  specialRequests: {}[];
   transactionHistory: {}[];
   malams: {}[];
   feedbacks: {}[];
