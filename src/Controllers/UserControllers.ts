@@ -393,20 +393,22 @@ export const UserUpdatesTheirProfile = AsyncHandler(
 
     // Get the user current station and the array of users in the station:
     const GetUserStation = await StationModels.findById(stationID);
-    const GetUsersInStations = GetUserStation?.users;
 
     // Once we have gotten the array of users, we want to compare the ID of users in that station to the one we want to remove from the station:
     // To delete the user from his former station:
-
-    const GetParticularUserOutOfStation = await GetUsersInStations?.filter(
-      (el: any) => el.id !== userID
+    const GetParticularUserOutOfStation = await StationModels.findByIdAndUpdate(
+      stationID,
+      {
+        users: GetUserStation?.users.filter((el: any) => el.id !== User?._id),
+      },
+      { new: true }
     );
 
     console.log("***********************");
-    console.log("User id: ", userID);
-    console.log("User former station: ", GetUserStation);
-    console.log("User updated station: ", CheckStation);
-    console.log("All Users in stations: ", GetUsersInStations);
+    console.log("User id: ", User?.id);
+    // console.log("User former station: ", GetUserStation);
+    // console.log("User updated station: ", CheckStation);
+    console.log("All Users in stations: ", GetUserStation?.users);
     console.log("Remaining users: ", GetParticularUserOutOfStation);
 
     if (User) {
