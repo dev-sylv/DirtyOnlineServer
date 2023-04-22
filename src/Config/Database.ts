@@ -7,7 +7,7 @@ const LIVEURI = EnvironmentVariables.MONGODB_STRING;
 
 export const DBCONNECTION = async () => {
   try {
-    const conn = await mongoose.connect(db_Url);
+    const conn = await mongoose.connect(LIVEURI);
     console.log("");
     console.log(`Database is connected to ${conn.connection.host}`);
   } catch (error) {
