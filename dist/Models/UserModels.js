@@ -75,6 +75,12 @@ const UserSchema = new mongoose_1.Schema({
             ref: "Requests",
         },
     ],
+    specialRequests: [
+        {
+            type: mongoose_1.default.Types.ObjectId,
+            ref: "Requests",
+        },
+    ],
     RequestHistories: [
         {
             type: mongoose_1.default.Types.ObjectId,

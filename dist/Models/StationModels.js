@@ -64,6 +64,12 @@ const StationSchema = new mongoose_1.Schema({
             ref: "Requests",
         },
     ],
+    specialRequests: [
+        {
+            type: mongoose_1.default.Types.ObjectId,
+            ref: "Requests",
+        },
+    ],
     transactionHistory: [
         {
             type: mongoose_1.default.Types.ObjectId,

@@ -9,6 +9,16 @@ const RequestSchema = new mongoose_1.Schema({
         type: Boolean,
         default: false,
     },
+    assigned: {
+        type: Boolean,
+        default: false,
+    },
+    DoneBy: {
+        type: String,
+    },
+    Pending: {
+        type: String,
+    },
 }, {
     timestamps: true,
 });

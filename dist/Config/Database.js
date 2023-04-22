@@ -19,7 +19,7 @@ const db_Url = "mongodb://localhost/MalamOnline";
 const LIVEURI = EnvironmentVariables_1.EnvironmentVariables.MONGODB_STRING;
 const DBCONNECTION = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const conn = yield mongoose_1.default.connect(LIVEURI);
+        const conn = yield mongoose_1.default.connect(db_Url);
         console.log("");
         console.log(`Database is connected to ${conn.connection.host}`);
     }

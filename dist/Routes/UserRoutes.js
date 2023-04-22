@@ -19,4 +19,8 @@ UserRouter.route("/getuser/:userID").get(UserControllers_1.GetSingleUser);
 UserRouter.route("/make-request/:userID/:stationID").patch(UserControllers_1.UserMakesARequest);
 //User closes Request
 UserRouter.route("/close-request/:userID/:malamID/:requestID/:stationID").patch(UserControllers_1.UserClosesARequest);
+// User makes a special request:
+UserRouter.route("/make-special-request/:userID/:stationID").patch(UserControllers_1.UserMakesSpecialRequest);
+// User updates their profile:
+UserRouter.route("/update-user-profile/:userID/:stationID").patch(UserControllers_1.UserUpdatesTheirProfile);
 exports.default = UserRouter;

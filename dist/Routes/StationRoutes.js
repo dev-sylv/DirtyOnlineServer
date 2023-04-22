@@ -9,7 +9,7 @@ const StationRouter = express_1.default.Router();
 // Register malams:
 StationRouter.route("/registermalam/:stationID").post(StationController_1.StationCreatesMalam);
 // Station assigning tasks to malams:
-StationRouter.route("/assign-malam/:stationID/:malamID/:CurrentrequestID").patch(StationController_1.StationAssignMalam);
+StationRouter.route("/assign-malam/:stationID/:userID/:malamID/:CurrentrequestID").patch(StationController_1.StationAssignMalam);
 // Get a single malam:
 StationRouter.route("/malam/:malamID").get(StationController_1.GetOneMalam);
 // Get All Stations:
