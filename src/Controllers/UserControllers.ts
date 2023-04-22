@@ -396,23 +396,19 @@ export const UserUpdatesTheirProfile = AsyncHandler(
 
     // Once we have gotten the array of users, we want to compare the ID of users in that station to the one we want to remove from the station:
     // To delete the user from his former station:
-    const GetParticularUserOutOfStation = await StationModels.findByIdAndUpdate(
-      stationID,
-      {
-        users: GetUserStation?.users.filter((el: any) => el.id !== User?._id),
-      },
-      { new: true }
+    // Find the index of the particular user to remove from the users in the station:
+    const GetParticularUserOutOfStation = GetUserStation?.users.findIndex(
+      (el) => el === User?._id
     );
 
-    console.log("***********************");
-    console.log("User id: ", User?.id);
-    // console.log("User former station: ", GetUserStation);
-    // console.log("User updated station: ", CheckStation);
-    console.log("All Users in stations: ", GetUserStation?.users);
-    console.log("Remaining users: ", GetParticularUserOutOfStation);
+    // Then using splice, delete that particular user with the id
+    const RemainingUsersInStation = GetUserStation?.users.splice(
+      GetParticularUserOutOfStation!,
+      1
+    );
 
     if (User) {
-      if (GetParticularUserOutOfStation) {
+      if (RemainingUsersInStation) {
         if (CheckStation) {
           const Update = await UserModels.findByIdAndUpdate(
             userID,
@@ -426,6 +422,17 @@ export const UserUpdatesTheirProfile = AsyncHandler(
           );
           CheckStation?.users.push(new mongoose.Types.ObjectId(Update?._id));
           CheckStation?.save();
+
+          const UpdatedFormerStation = await StationModels.findByIdAndUpdate(
+            stationID,
+            {
+              users: RemainingUsersInStation,
+            },
+            { new: true }
+          );
+          console.log("***********************");
+          console.log("Updated User former station: ", UpdatedFormerStation);
+          console.log("User new station: ", CheckStation);
 
           return res.status(HTTPCODES.OK).json({
             message: "User profile updated successfully",
