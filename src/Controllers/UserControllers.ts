@@ -198,8 +198,8 @@ export const UserMakesARequest = AsyncHandler(
             { new: true }
           );
 
-          //reset requests back to 4 every four weeks
-          cron.schedule("*/5 * * * *", async () => {
+          // Schedule the user requests to reset back to 4 every 28 days
+          cron.schedule("0 0 */28 * *", async () => {
             try {
               await UserModels.findByIdAndUpdate(
                 req.params.userID,
@@ -430,9 +430,6 @@ export const UserUpdatesTheirProfile = AsyncHandler(
             },
             { new: true }
           );
-          console.log("***********************");
-          console.log("Updated User former station: ", UpdatedFormerStation);
-          console.log("User new station: ", CheckStation);
 
           return res.status(HTTPCODES.OK).json({
             message: "User profile updated successfully",
