@@ -234,6 +234,25 @@ export const GetOneStation = AsyncHandler(
 );
 
 // Station login:
+export const StationLogin = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+
+    const StationEmail = await StationModels.findOne({ email });
+    const StationPassword = StationEmail?.password;
+
+    if (email === StationEmail && password === StationPassword) {
+      next(
+        new MainAppError({
+          message: "Wrong station credentials",
+          httpcode: HTTPCODES.BAD_REQUEST,
+        })
+      );
+    } else {
+      return res.status(HTTPCODES.OK).json;
+    }
+  }
+);
 
 // View all malams:
 export const ViewAllMalams = AsyncHandler(
