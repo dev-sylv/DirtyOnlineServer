@@ -7,7 +7,7 @@ import { Request, Response } from "express";
 // Get all requests in the database:
 export const GetAllRequests = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const Requests = await RequestModels.find();
+    const Requests = await RequestModels.find().sort({ createdAt: -1 });
     if (!Requests) {
       next(
         new MainAppError({
@@ -27,7 +27,9 @@ export const GetAllRequests = AsyncHandler(
 // Get the 5 recent requests for the director's dashboard:
 export const Get5RecentRequests = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const Requests = await RequestModels.find().limit(5);
+    const Requests = await RequestModels.find()
+      .limit(5)
+      .sort({ createdAt: -1 });
     if (!Requests) {
       next(
         new MainAppError({
