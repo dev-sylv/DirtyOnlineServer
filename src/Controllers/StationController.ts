@@ -249,7 +249,10 @@ export const StationLogin = AsyncHandler(
         })
       );
     } else {
-      return res.status(HTTPCODES.OK).json;
+      return res.status(HTTPCODES.OK).json({
+        message: "Station login successful",
+        data: StationEmail,
+      });
     }
   }
 );
