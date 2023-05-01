@@ -9,6 +9,8 @@ const StationSchema = new Schema(
     station: {
       type: String,
       required: [true, "Please enter your  station name"],
+      unique: true,
+      lowercase: true,
     },
     email: {
       type: String,
