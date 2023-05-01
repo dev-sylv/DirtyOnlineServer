@@ -105,6 +105,13 @@ export const DirectorCreatesStation = AsyncHandler(
 
     if (director) {
       if (CheckStationName) {
+        next(
+          new MainAppError({
+            message: "Station with this name already exists",
+            httpcode: HTTPCODES.BAD_REQUEST,
+          })
+        );
+      } else {
         const Station = await StationModels.create({
           station,
           email,
@@ -123,13 +130,6 @@ export const DirectorCreatesStation = AsyncHandler(
           message: "Station Successfully created",
           data: Station,
         });
-      } else {
-        next(
-          new MainAppError({
-            message: "Station with this name already exists",
-            httpcode: HTTPCODES.BAD_REQUEST,
-          })
-        );
       }
     } else {
       next(
