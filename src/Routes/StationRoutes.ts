@@ -4,6 +4,7 @@ import {
   GetAllStations,
   GetOneMalam,
   GetOneStation,
+  GetStationRequests,
   StationAssignMalam,
   StationCreatesMalam,
   StationLogin,
@@ -30,5 +31,8 @@ StationRouter.route("/all-stations/:stationID").get(GetOneStation);
 
 // Station login:
 StationRouter.route("/login-station").post(StationLogin);
+
+// Get Station requests:
+StationRouter.route("/station/:stationID/requests").get(GetStationRequests);
 
 export default StationRouter;
