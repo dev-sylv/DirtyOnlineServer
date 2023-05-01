@@ -232,3 +232,28 @@ export const GetOneStation = AsyncHandler(
     }
   }
 );
+
+// Station login:
+
+// View all malams:
+export const ViewAllMalams = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const Malam = await MalamModels.find().sort({ createdAt: -1 });
+
+    if (Malam) {
+      return res.status(HTTPCODES.OK).json({
+        message: `All ${Malam?.length} malams successfully gotten`,
+        data: Malam,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "Malams not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);
+
+// Get a particular station request:
