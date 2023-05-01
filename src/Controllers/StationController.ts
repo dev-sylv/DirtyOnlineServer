@@ -232,3 +232,50 @@ export const GetOneStation = AsyncHandler(
     }
   }
 );
+
+// Station login:
+export const StationLogin = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+
+    const StationEmail = await StationModels.findOne({ email });
+    const StationPassword = StationEmail?.password;
+
+    if (email === StationEmail && password === StationPassword) {
+      next(
+        new MainAppError({
+          message: "Wrong station credentials",
+          httpcode: HTTPCODES.BAD_REQUEST,
+        })
+      );
+    } else {
+      return res.status(HTTPCODES.OK).json({
+        message: "Station login successful",
+        data: StationEmail,
+      });
+    }
+  }
+);
+
+// View all malams:
+export const ViewAllMalams = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const Malam = await MalamModels.find().sort({ createdAt: -1 });
+
+    if (Malam) {
+      return res.status(HTTPCODES.OK).json({
+        message: `All ${Malam?.length} malams successfully gotten`,
+        data: Malam,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "Malams not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+  }
+);
+
+// Get a particular station request:

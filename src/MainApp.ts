@@ -11,6 +11,7 @@ import { ErrorHandler } from "./Middlewares/ErrorHandler/ErrorHandler";
 import UserRouter from "./Routes/UserRoutes";
 import DirectorRouter from "./Routes/DirectorRoutes";
 import StationRouter from "./Routes/StationRoutes";
+import RequestRouter from "./Routes/RequestRoutes";
 
 export const AppConfig = (app: Application) => {
   app.use(express.json());
@@ -21,6 +22,7 @@ export const AppConfig = (app: Application) => {
   app.use("/api/director", DirectorRouter);
   app.use("/api/users", UserRouter);
   app.use("/api/stations", StationRouter);
+  app.use("/api/requests", RequestRouter);
 
   app.all("*", (req: Request, res: Response, next: NextFunction) => {
     next(

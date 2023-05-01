@@ -90,8 +90,8 @@ export const DirectorLogin = AsyncHandler(
 export const DirectorCreatesStation = AsyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
     const { station, email, phoneNumber, address, password } = req.body;
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash(password, salt);
     if (!station || !email) {
       next(
         new MainAppError({
@@ -106,7 +106,7 @@ export const DirectorCreatesStation = AsyncHandler(
       email,
       phoneNumber,
       address,
-      password: hashedPassword,
+      password,
       users: [],
       requests: [],
       transactionHistory: [],

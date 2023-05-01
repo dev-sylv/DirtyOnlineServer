@@ -6,6 +6,7 @@ import {
   GetOneStation,
   StationAssignMalam,
   StationCreatesMalam,
+  StationLogin,
 } from "../Controllers/StationController";
 
 const StationRouter = express.Router();
@@ -26,5 +27,8 @@ StationRouter.route("/all-stations").get(GetAllStations);
 
 // Get One Stations:
 StationRouter.route("/all-stations/:stationID").get(GetOneStation);
+
+// Station login:
+StationRouter.route("/login-station").post(StationLogin);
 
 export default StationRouter;
