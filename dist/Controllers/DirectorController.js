@@ -83,38 +83,49 @@ exports.DirectorLogin = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __a
 // Director Creates stations:
 exports.DirectorCreatesStation = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { station, email, phoneNumber, address, password } = req.body;
-    const salt = yield bcrypt_1.default.genSalt(10);
-    const hashedPassword = yield bcrypt_1.default.hash(password, salt);
+    // const salt = await bcrypt.genSalt(10);
+    // const hashedPassword = await bcrypt.hash(password, salt);
     if (!station || !email) {
         next(new MainAppError_1.MainAppError({
             message: "Please provide neccessary credentials",
             httpcode: MainAppError_1.HTTPCODES.BAD_REQUEST,
         }));
     }
+    const CheckStationName = yield StationModels_1.default.findOne({ station });
     const director = yield ManagerModels_1.default.findById(req.params.directorID);
-    const Station = yield StationModels_1.default.create({
-        station,
-        email,
-        phoneNumber,
-        address,
-        password: hashedPassword,
-        users: [],
-        requests: [],
-        transactionHistory: [],
-        feedbacks: [],
-    });
-    director === null || director === void 0 ? void 0 : director.stations.push(new mongoose_1.default.Types.ObjectId(Station === null || Station === void 0 ? void 0 : Station._id));
-    director === null || director === void 0 ? void 0 : director.save();
-    if (!Station) {
+    if (director) {
+        if (CheckStationName) {
+            const Station = yield StationModels_1.default.create({
+                station,
+                email,
+                phoneNumber,
+                address,
+                password,
+                users: [],
+                requests: [],
+                transactionHistory: [],
+                feedbacks: [],
+            });
+            director === null || director === void 0 ? void 0 : director.stations.push(new mongoose_1.default.Types.ObjectId(Station === null || Station === void 0 ? void 0 : Station._id));
+            director === null || director === void 0 ? void 0 : director.save();
+            return res.status(201).json({
+                message: "Station Successfully created",
+                data: Station,
+            });
+        }
+        else {
+            next(new MainAppError_1.MainAppError({
+                message: "Station with this name already exists",
+                httpcode: MainAppError_1.HTTPCODES.BAD_REQUEST,
+            }));
+        }
+    }
+    else {
         next(new MainAppError_1.MainAppError({
-            message: "Unable to register director",
+            message: "You are not authorized",
             httpcode: MainAppError_1.HTTPCODES.INTERNAL_SERVER_ERROR,
         }));
     }
-    return res.status(201).json({
-        message: "Station Successfully created",
-        data: Station,
-    });
 }));
 //To Get Director
 exports.GetDirector = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {

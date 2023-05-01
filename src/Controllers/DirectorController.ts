@@ -100,34 +100,48 @@ export const DirectorCreatesStation = AsyncHandler(
         })
       );
     }
+    const CheckStationName = await StationModels.findOne({ station });
     const director = await DirectorModels.findById(req.params.directorID);
-    const Station = await StationModels.create({
-      station,
-      email,
-      phoneNumber,
-      address,
-      password,
-      users: [],
-      requests: [],
-      transactionHistory: [],
-      feedbacks: [],
-    });
-    director?.stations.push(new mongoose.Types.ObjectId(Station?._id));
-    director?.save();
-    if (!Station) {
+
+    if (director) {
+      if (CheckStationName) {
+        const Station = await StationModels.create({
+          station,
+          email,
+          phoneNumber,
+          address,
+          password,
+          users: [],
+          requests: [],
+          transactionHistory: [],
+          feedbacks: [],
+        });
+        director?.stations.push(new mongoose.Types.ObjectId(Station?._id));
+        director?.save();
+
+        return res.status(201).json({
+          message: "Station Successfully created",
+          data: Station,
+        });
+      } else {
+        next(
+          new MainAppError({
+            message: "Station with this name already exists",
+            httpcode: HTTPCODES.BAD_REQUEST,
+          })
+        );
+      }
+    } else {
       next(
         new MainAppError({
-          message: "Unable to register director",
+          message: "You are not authorized",
           httpcode: HTTPCODES.INTERNAL_SERVER_ERROR,
         })
       );
     }
-    return res.status(201).json({
-      message: "Station Successfully created",
-      data: Station,
-    });
   }
 );
+
 //To Get Director
 export const GetDirector = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

@@ -12,6 +12,7 @@ const ErrorHandler_1 = require("./Middlewares/ErrorHandler/ErrorHandler");
 const UserRoutes_1 = __importDefault(require("./Routes/UserRoutes"));
 const DirectorRoutes_1 = __importDefault(require("./Routes/DirectorRoutes"));
 const StationRoutes_1 = __importDefault(require("./Routes/StationRoutes"));
+const RequestRoutes_1 = __importDefault(require("./Routes/RequestRoutes"));
 const AppConfig = (app) => {
     app.use(express_1.default.json());
     app.use((0, cors_1.default)());
@@ -20,6 +21,7 @@ const AppConfig = (app) => {
     app.use("/api/director", DirectorRoutes_1.default);
     app.use("/api/users", UserRoutes_1.default);
     app.use("/api/stations", StationRoutes_1.default);
+    app.use("/api/requests", RequestRoutes_1.default);
     app.all("*", (req, res, next) => {
         next(new MainAppError_1.MainAppError({
             message: `This router ${req.originalUrl} does not exist`,

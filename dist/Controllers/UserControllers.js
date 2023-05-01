@@ -22,6 +22,7 @@ const RequestModels_1 = __importDefault(require("../Models/RequestModels"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const MalamModels_1 = __importDefault(require("../Models/MalamModels"));
 const node_cron_1 = __importDefault(require("node-cron"));
+const CustomRequestsModels_1 = __importDefault(require("../Models/CustomRequestsModels"));
 // Users Registration:
 exports.UsersRegistration = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, address, email, password, stationName } = req.body;
@@ -266,8 +267,9 @@ exports.UserMakesSpecialRequest = (0, AsyncHandler_1.AsyncHandler)((req, res, ne
         if (getStation) {
             // User makes the requests:
             const Time = new Date().toString().split("2");
-            const SpecialwasteRequests = yield RequestModels_1.default.create({
+            const SpecialwasteRequests = yield CustomRequestsModels_1.default.create({
                 requestMessage: `${getUser === null || getUser === void 0 ? void 0 : getUser.name} made a request by ${Time} for a waste disposal at ${address}`,
+                requestType: "Custom Requests",
                 requestStatus: true,
                 assigned: false,
                 DoneBy: "No One",

@@ -279,3 +279,31 @@ export const ViewAllMalams = AsyncHandler(
 );
 
 // Get a particular station request:
+export const GetStationRequests = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const StationRequests = await StationModels.findById(req.params.stationID);
+
+    if (!StationRequests) {
+      next(
+        new MainAppError({
+          message: "Station Account not found",
+          httpcode: HTTPCODES.NOT_FOUND,
+        })
+      );
+    }
+
+    const Requests = await StationModels.findById(
+      req.params.stationID
+    ).populate({
+      path: "requests",
+      options: {
+        sort: { createdAt: -1 },
+      },
+    });
+
+    return res.status(200).json({
+      message: "Successfully got this business account",
+      data: Requests!.requests,
+    });
+  }
+);

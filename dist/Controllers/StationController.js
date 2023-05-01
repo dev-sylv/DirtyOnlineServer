@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GetOneStation = exports.GetAllStations = exports.GetOneMalam = exports.StationAssignMalam = exports.StationCreatesMalam = void 0;
+exports.GetStationRequests = exports.ViewAllMalams = exports.StationLogin = exports.GetOneStation = exports.GetAllStations = exports.GetOneMalam = exports.StationAssignMalam = exports.StationCreatesMalam = void 0;
 const AsyncHandler_1 = require("../Utils/AsyncHandler");
 const StationModels_1 = __importDefault(require("../Models/StationModels"));
 const MalamModels_1 = __importDefault(require("../Models/MalamModels"));
@@ -194,4 +194,58 @@ exports.GetOneStation = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __a
             httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
         }));
     }
+}));
+// Station login:
+exports.StationLogin = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    const StationEmail = yield StationModels_1.default.findOne({ email });
+    const StationPassword = StationEmail === null || StationEmail === void 0 ? void 0 : StationEmail.password;
+    if (email === StationEmail && password === StationPassword) {
+        next(new MainAppError_1.MainAppError({
+            message: "Wrong station credentials",
+            httpcode: MainAppError_1.HTTPCODES.BAD_REQUEST,
+        }));
+    }
+    else {
+        return res.status(MainAppError_1.HTTPCODES.OK).json({
+            message: "Station login successful",
+            data: StationEmail,
+        });
+    }
+}));
+// View all malams:
+exports.ViewAllMalams = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const Malam = yield MalamModels_1.default.find().sort({ createdAt: -1 });
+    if (Malam) {
+        return res.status(MainAppError_1.HTTPCODES.OK).json({
+            message: `All ${Malam === null || Malam === void 0 ? void 0 : Malam.length} malams successfully gotten`,
+            data: Malam,
+        });
+    }
+    else {
+        next(new MainAppError_1.MainAppError({
+            message: "Malams not found",
+            httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
+        }));
+    }
+}));
+// Get a particular station request:
+exports.GetStationRequests = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const StationRequests = yield StationModels_1.default.findById(req.params.stationID);
+    if (!StationRequests) {
+        next(new MainAppError_1.MainAppError({
+            message: "Station Account not found",
+            httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
+        }));
+    }
+    const Requests = yield StationModels_1.default.findById(req.params.stationID).populate({
+        path: "requests",
+        options: {
+            sort: { createdAt: -1 },
+        },
+    });
+    return res.status(200).json({
+        message: "Successfully got this business account",
+        data: Requests.requests,
+    });
 }));

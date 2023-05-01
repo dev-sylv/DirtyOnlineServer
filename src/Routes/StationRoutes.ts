@@ -4,9 +4,11 @@ import {
   GetAllStations,
   GetOneMalam,
   GetOneStation,
+  GetStationRequests,
   StationAssignMalam,
   StationCreatesMalam,
   StationLogin,
+  ViewAllMalams,
 } from "../Controllers/StationController";
 
 const StationRouter = express.Router();
@@ -22,6 +24,9 @@ StationRouter.route(
 // Get a single malam:
 StationRouter.route("/malam/:malamID").get(GetOneMalam);
 
+// View all malams:
+StationRouter.route("/all-malams").get(ViewAllMalams);
+
 // Get All Stations:
 StationRouter.route("/all-stations").get(GetAllStations);
 
@@ -30,5 +35,8 @@ StationRouter.route("/all-stations/:stationID").get(GetOneStation);
 
 // Station login:
 StationRouter.route("/login-station").post(StationLogin);
+
+// Get Station requests:
+StationRouter.route("/station/:stationID/requests").get(GetStationRequests);
 
 export default StationRouter;
