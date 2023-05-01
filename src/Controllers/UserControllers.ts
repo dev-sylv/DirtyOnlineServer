@@ -8,6 +8,7 @@ import RequestModels from "../Models/RequestModels";
 import mongoose from "mongoose";
 import MalamModels from "../Models/MalamModels";
 import cron from "node-cron";
+import CustomRequestModels from "../Models/CustomRequestsModels";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
@@ -335,8 +336,9 @@ export const UserMakesSpecialRequest = AsyncHandler(
       if (getStation) {
         // User makes the requests:
         const Time = new Date().toString().split("2");
-        const SpecialwasteRequests = await RequestModels.create({
+        const SpecialwasteRequests = await CustomRequestModels.create({
           requestMessage: `${getUser?.name} made a request by ${Time} for a waste disposal at ${address}`,
+          requestType: "Custom Requests",
           requestStatus: true,
           assigned: false,
           DoneBy: "No One",

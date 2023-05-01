@@ -1,4 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 
 import { requestInterface } from "../Interfaces/AllInterfaces";
 
@@ -6,6 +6,10 @@ const RequestSchema = new Schema(
   {
     requestMessage: {
       type: String,
+    },
+    requestType: {
+      type: String,
+      default: "Custom Requests",
     },
     requestStatus: {
       type: Boolean,
@@ -27,6 +31,9 @@ const RequestSchema = new Schema(
   }
 );
 
-const RequestModels = model<requestInterface>("Requests", RequestSchema);
+const CustomRequestModels = model<requestInterface>(
+  "Special Requests",
+  RequestSchema
+);
 
-export default RequestModels;
+export default CustomRequestModels;

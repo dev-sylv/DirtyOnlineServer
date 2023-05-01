@@ -3,6 +3,7 @@ import { AsyncHandler } from "../Utils/AsyncHandler";
 import RequestModels from "../Models/RequestModels";
 import { HTTPCODES, MainAppError } from "../Utils/MainAppError";
 import { Request, Response } from "express";
+import CustomRequestModels from "../Models/CustomRequestsModels";
 
 // Get all requests in the database:
 export const GetAllRequests = AsyncHandler(
@@ -41,6 +42,29 @@ export const Get5RecentRequests = AsyncHandler(
       return res.status(HTTPCODES.OK).json({
         message: `Got all ${Requests?.length} requests`,
         data: Requests,
+      });
+    }
+  }
+);
+
+// View all custom requests:
+export const ViewAllCustomRequests = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const Customrequests = await CustomRequestModels.find().sort({
+      createdAt: -1,
+    });
+
+    if (!Customrequests) {
+      next(
+        new MainAppError({
+          message: "No custom requests found",
+          httpcode: HTTPCODES.BAD_REQUEST,
+        })
+      );
+    } else {
+      return res.status(HTTPCODES.OK).json({
+        message: `All ${Customrequests?.length} custom requests gotten`,
+        data: Customrequests,
       });
     }
   }
