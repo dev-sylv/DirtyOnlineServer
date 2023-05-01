@@ -237,22 +237,37 @@ export const GetOneStation = AsyncHandler(
 export const StationLogin = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
-
-    const StationEmail = await StationModels.findOne({ email });
-    const StationPassword = StationEmail?.password;
-
-    if (email === StationEmail && password === StationPassword) {
+    if (!email)
       next(
         new MainAppError({
-          message: "Wrong station credentials",
           httpcode: HTTPCODES.BAD_REQUEST,
+          message: "Please input your email address",
         })
       );
-    } else {
-      return res.status(HTTPCODES.OK).json({
-        message: "Station login successful",
-        data: StationEmail,
+    const station = await StationModels.findOne({
+      email,
+    });
+
+    if (!station)
+      next(
+        new MainAppError({
+          httpcode: HTTPCODES.NOT_FOUND,
+          message: "Invalid account",
+        })
+      );
+
+    if (station) {
+      return res.status(HTTPCODES.CREATED).json({
+        message: "Login Successfull",
+        data: station,
       });
+    } else {
+      next(
+        new MainAppError({
+          httpcode: HTTPCODES.NOT_FOUND,
+          message: "Email or password not correct",
+        })
+      );
     }
   }
 );
@@ -302,7 +317,7 @@ export const GetStationRequests = AsyncHandler(
     });
 
     return res.status(200).json({
-      message: "Successfully got this business account",
+      message: "Successfully got this station requests",
       data: Requests!.requests,
     });
   }
