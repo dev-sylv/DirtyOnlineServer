@@ -94,7 +94,13 @@ exports.DirectorCreatesStation = (0, AsyncHandler_1.AsyncHandler)((req, res, nex
     const CheckStationName = yield StationModels_1.default.findOne({ station });
     const director = yield ManagerModels_1.default.findById(req.params.directorID);
     if (director) {
-        if (CheckStationName) {
+        if (CheckStationName === null || CheckStationName === void 0 ? void 0 : CheckStationName.station) {
+            next(new MainAppError_1.MainAppError({
+                message: "Station with this name already exists",
+                httpcode: MainAppError_1.HTTPCODES.BAD_REQUEST,
+            }));
+        }
+        else {
             const Station = yield StationModels_1.default.create({
                 station,
                 email,
@@ -112,12 +118,6 @@ exports.DirectorCreatesStation = (0, AsyncHandler_1.AsyncHandler)((req, res, nex
                 message: "Station Successfully created",
                 data: Station,
             });
-        }
-        else {
-            next(new MainAppError_1.MainAppError({
-                message: "Station with this name already exists",
-                httpcode: MainAppError_1.HTTPCODES.BAD_REQUEST,
-            }));
         }
     }
     else {

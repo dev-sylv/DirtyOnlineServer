@@ -104,7 +104,7 @@ export const DirectorCreatesStation = AsyncHandler(
     const director = await DirectorModels.findById(req.params.directorID);
 
     if (director) {
-      if (CheckStationName) {
+      if (CheckStationName?.station) {
         next(
           new MainAppError({
             message: "Station with this name already exists",

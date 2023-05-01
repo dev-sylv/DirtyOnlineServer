@@ -198,19 +198,30 @@ exports.GetOneStation = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __a
 // Station login:
 exports.StationLogin = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
-    const StationEmail = yield StationModels_1.default.findOne({ email });
-    const StationPassword = StationEmail === null || StationEmail === void 0 ? void 0 : StationEmail.password;
-    if (email === StationEmail && password === StationPassword) {
+    if (!email)
         next(new MainAppError_1.MainAppError({
-            message: "Wrong station credentials",
             httpcode: MainAppError_1.HTTPCODES.BAD_REQUEST,
+            message: "Please input your email address",
         }));
+    const station = yield StationModels_1.default.findOne({
+        email,
+    });
+    if (!station)
+        next(new MainAppError_1.MainAppError({
+            httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
+            message: "Invalid account",
+        }));
+    if (station) {
+        return res.status(MainAppError_1.HTTPCODES.CREATED).json({
+            message: "Login Successfull",
+            data: station,
+        });
     }
     else {
-        return res.status(MainAppError_1.HTTPCODES.OK).json({
-            message: "Station login successful",
-            data: StationEmail,
-        });
+        next(new MainAppError_1.MainAppError({
+            httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
+            message: "Email or password not correct",
+        }));
     }
 }));
 // View all malams:
@@ -245,7 +256,7 @@ exports.GetStationRequests = (0, AsyncHandler_1.AsyncHandler)((req, res, next) =
         },
     });
     return res.status(200).json({
-        message: "Successfully got this business account",
+        message: "Successfully got this station requests",
         data: Requests.requests,
     });
 }));
