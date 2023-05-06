@@ -34,7 +34,7 @@ export interface MalamDetails extends Document {
   uniqueID: string;
   phoneNumber: number;
   address: string;
-  password: string;
+
   dateTime: string;
   status: string;
   role: string;
