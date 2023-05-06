@@ -12,10 +12,7 @@ import UserModels from "../Models/UserModels";
 // Station create malams:
 export const StationCreatesMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, email, phoneNumber, password } = req.body;
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const { name, email, phoneNumber } = req.body;
 
     const station = await StationModels.findById(req.params.stationID);
     if (station) {
@@ -23,7 +20,6 @@ export const StationCreatesMalam = AsyncHandler(
         name,
         email,
         phoneNumber,
-        password: hashedPassword,
         uniqueID: otpgenerator.generate(20, {
           upperCaseAlphabets: false,
           specialChars: false,
