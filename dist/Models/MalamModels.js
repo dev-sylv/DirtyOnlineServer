@@ -30,10 +30,6 @@ const MalamSchema = new mongoose_1.Schema({
     phoneNumber: {
         type: Number,
     },
-    password: {
-        type: String,
-        required: [true, "Please enter your Password"],
-    },
     dateTime: {
         type: String,
     },
