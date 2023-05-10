@@ -12,7 +12,7 @@ import UserModels from "../Models/UserModels";
 // Station create malams:
 export const StationCreatesMalam = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const { name, email, phoneNumber } = req.body;
+    const { name, email, phoneNumber, address } = req.body;
 
     const station = await StationModels.findById(req.params.stationID);
     if (station) {
@@ -20,6 +20,7 @@ export const StationCreatesMalam = AsyncHandler(
         name,
         email,
         phoneNumber,
+        address,
         uniqueID: otpgenerator.generate(20, {
           upperCaseAlphabets: false,
           specialChars: false,
