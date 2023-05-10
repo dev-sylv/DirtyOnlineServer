@@ -23,13 +23,14 @@ const RequestModels_1 = __importDefault(require("../Models/RequestModels"));
 const UserModels_1 = __importDefault(require("../Models/UserModels"));
 // Station create malams:
 exports.StationCreatesMalam = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { name, email, phoneNumber } = req.body;
+    const { name, email, phoneNumber, address } = req.body;
     const station = yield StationModels_1.default.findById(req.params.stationID);
     if (station) {
         const registerMalam = yield MalamModels_1.default.create({
             name,
             email,
             phoneNumber,
+            address,
             uniqueID: otp_generator_1.default.generate(20, {
                 upperCaseAlphabets: false,
                 specialChars: false,
