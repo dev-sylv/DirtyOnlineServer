@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import MalamModels from "../Models/MalamModels";
 import cron from "node-cron";
 import CustomRequestModels from "../Models/CustomRequestsModels";
+import { VerifyUsers } from "../EmailAuth/Email";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
@@ -40,6 +41,8 @@ export const UsersRegistration = AsyncHandler(
         station: FindStation,
         numberOfRequests: 4,
       });
+
+      VerifyUsers(users);
 
       FindStation?.users.push(new mongoose.Types.ObjectId(users?._id));
       FindStation?.save();
