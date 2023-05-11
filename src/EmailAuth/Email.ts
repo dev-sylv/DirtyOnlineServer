@@ -1,6 +1,7 @@
 import ejs from "ejs";
 
 import nodemailer from "nodemailer";
+import path from "path";
 
 import { google, homegraph_v1 } from "googleapis";
 
@@ -35,11 +36,27 @@ export const VerifyUsers = async (user: any) => {
       },
     });
 
+    const frontendurl = "http://localhost:3000/verify";
+    // Connecting ejs file:
+    const EmailVerifyEjs = path.join(
+      __dirname,
+      "../../views/AccountVerification.ejs"
+    );
+
+    // To render file:
+    const Renderemailfile = await ejs.renderFile(EmailVerifyEjs, {
+      name: user?.name,
+      email: user?.email,
+      userId: user?._id,
+      userToken: user?.token,
+      url: `${frontendurl}/${user?._id}/${user?.token}`,
+    });
+
     const Mailer = {
       from: "ecoBIN ♻ <ecobinng@gmail.com>",
       to: user?.email,
       subject: "Email Verification",
-      html: "Please verify your email here",
+      html: Renderemailfile,
     };
 
     transporter
