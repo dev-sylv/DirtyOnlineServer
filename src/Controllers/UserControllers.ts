@@ -40,6 +40,7 @@ export const UsersRegistration = AsyncHandler(
         password: hashedPassword,
         station: FindStation,
         numberOfRequests: 4,
+        isVerified: true,
       });
 
       VerifyUsers(users);
