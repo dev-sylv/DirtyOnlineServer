@@ -1,9 +1,7 @@
 import ejs from "ejs";
-
 import nodemailer from "nodemailer";
 import path from "path";
-
-import { google, homegraph_v1 } from "googleapis";
+import { google } from "googleapis";
 
 const GOOGLE_ID =
   "607063325888-5r9ma23i481qd1tk065dlgf9pofascfi.apps.googleusercontent.com";
@@ -37,6 +35,7 @@ export const VerifyUsers = async (user: any) => {
     });
 
     const frontendurl = "http://localhost:3000/verify";
+
     // Connecting ejs file:
     const EmailVerifyEjs = path.join(
       __dirname,
@@ -55,7 +54,7 @@ export const VerifyUsers = async (user: any) => {
     const Mailer = {
       from: "ecoBIN ♻ <ecobinng@gmail.com>",
       to: user?.email,
-      subject: "Email Verification",
+      subject: "Account Verification",
       html: Renderemailfile,
     };
 

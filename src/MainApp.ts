@@ -14,9 +14,23 @@ import StationRouter from "./Routes/StationRoutes";
 import RequestRouter from "./Routes/RequestRoutes";
 
 export const AppConfig = (app: Application) => {
+  app.set("view engine", "ejs");
   app.use(express.json());
+  app.use(express.static("pulic"));
+  app.use(express.static(`${__dirname} public/css`));
+  app.use(express.static(`${__dirname} public/asset`));
   app.use(cors());
   app.use(morgan("dev"));
+
+  app.get("/", (req: Request, res: Response) => {
+    return res.status(200).json({
+      message: "API READY FOR ecoBIN Project",
+    });
+  });
+
+  app.get("/views/verify", (req: Request, res: Response) => {
+    res.render("AccountVerification");
+  });
 
   // Configuring the routes:
   app.use("/api/director", DirectorRouter);
