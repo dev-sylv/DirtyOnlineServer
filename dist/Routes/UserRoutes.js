@@ -9,6 +9,8 @@ const UserControllers_1 = require("../Controllers/UserControllers");
 const UserRouter = express_1.default.Router();
 // Register users:
 UserRouter.route("/registeruser").post(UserValidation_1.UserRegisterValidation, UserControllers_1.UsersRegistration);
+// Verify users:
+UserRouter.route("/verify-user/:userID").get(UserControllers_1.UsersVerification);
 // Login users:
 UserRouter.route("/loginuser").post(UserValidation_1.UserLoginValidation, UserControllers_1.UsersLogin);
 // Get all users

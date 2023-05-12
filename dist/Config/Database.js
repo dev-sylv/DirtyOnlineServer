@@ -15,16 +15,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DBCONNECTION = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const EnvironmentVariables_1 = require("./EnvironmentVariables");
-const db_Url = "mongodb://localhost/MalamOnline";
+const db_Url = "mongodb://127.0.0.1:27017/MalamOnline";
 const LIVEURI = EnvironmentVariables_1.EnvironmentVariables.MONGODB_STRING;
 const DBCONNECTION = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const conn = yield mongoose_1.default.connect(LIVEURI);
         console.log("");
         console.log(`Database is connected to ${conn.connection.host}`);
+        // if (LIVEURI) {
+        //   const conn = await mongoose.connect(LIVEURI);
+        //   console.log("");
+        //   console.log(`Database is connected to ${conn.connection.host}`);
+        // } else {
+        //   const conn = await mongoose.connect(db_Url);
+        //   console.log("");
+        //   console.log(`Database is connected to ${conn.connection.host}`);
+        // }
     }
     catch (error) {
-        console.log("An error occured in connecting to DB");
+        console.log("An error occured in connecting to DB", error);
     }
 });
 exports.DBCONNECTION = DBCONNECTION;
