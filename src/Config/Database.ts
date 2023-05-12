@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { EnvironmentVariables } from "./EnvironmentVariables";
 
-const db_Url = "mongodb://localhost:27017/MalamOnline";
+const db_Url = "mongodb://localhost/MalamOnline";
 
 const LIVEURI = EnvironmentVariables.MONGODB_STRING;
 
@@ -20,6 +20,6 @@ export const DBCONNECTION = async () => {
     //   console.log(`Database is connected to ${conn.connection.host}`);
     // }
   } catch (error) {
-    console.log("An error occured in connecting to DB");
+    console.log("An error occured in connecting to DB", error);
   }
 };
