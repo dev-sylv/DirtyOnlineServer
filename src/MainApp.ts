@@ -16,9 +16,6 @@ import RequestRouter from "./Routes/RequestRoutes";
 export const AppConfig = (app: Application) => {
   app.set("view engine", "ejs");
   app.use(express.json());
-  app.use(express.static("pulic"));
-  app.use(express.static(`${__dirname} public/css`));
-  app.use(express.static(`${__dirname} public/asset`));
   app.use(cors());
   app.use(morgan("dev"));
 
@@ -28,6 +25,7 @@ export const AppConfig = (app: Application) => {
     });
   });
 
+  // Rendering ejs file on the browser:
   app.get("/views/verify", (req: Request, res: Response) => {
     res.render("AccountVerification");
   });
