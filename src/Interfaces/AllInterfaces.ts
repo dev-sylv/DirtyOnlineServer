@@ -25,6 +25,8 @@ export interface UserDetails extends Document {
   station: {};
   transactionHistory: {}[];
   isVerified: boolean;
+  token: string;
+  OTP: string;
 }
 
 export interface MalamDetails extends Document {

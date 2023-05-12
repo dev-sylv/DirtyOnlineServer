@@ -95,46 +95,65 @@ export const UsersVerification = AsyncHandler(
 export const UsersLogin = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
-    if (!email)
-      next(
-        new MainAppError({
-          httpcode: HTTPCODES.BAD_REQUEST,
-          message: "Please input your email address",
-        })
-      );
-    const user = await UserModels.findOne({
-      email,
-    }).populate({
-      path: "station",
-      options: {
-        createdAt: -1,
-      },
-    });
-    if (!user)
-      next(
-        new MainAppError({
-          httpcode: HTTPCODES.NOT_FOUND,
-          message: "Invalid account",
-        })
-      );
-    const CheckPassword = await bcrypt.compare(password, user!.password);
+
+    const CheckUser = await UserModels.findOne({ email });
+
+    const CheckPassword = await bcrypt.compare(password, CheckUser!.password);
 
     if (CheckPassword) {
-      return res.status(HTTPCODES.CREATED).json({
-        message: "Login Successfull",
-        data: user,
-      });
+      if (CheckUser) {
+        if (CheckUser?.isVerified && CheckUser?.token === "") {
+          // The access token that expires every 2 mins
+          // const AccessToken = jwt.sign(
+          //   {
+          //     id: CheckUser?._id,
+          //   },
+          //   "AccessTokenSecret",
+          //   {
+          //     expiresIn: "40s",
+          //   }
+          // );
+          // // The refresh token
+          // const RefreshToken = jwt.sign(
+          //   {
+          //     id: CheckUser?._id,
+          //   },
+          //   "RefreshTokenSecret",
+          //   { expiresIn: "1m" }
+          // );
+
+          return res.status(HTTPCODES.OK).json({
+            message: "User Login successfull",
+            data: CheckUser,
+            // AccessToken: AccessToken,
+            // RefreshToken: RefreshToken,
+          });
+        } else {
+          next(
+            new MainAppError({
+              message: "User not Verified",
+              httpcode: HTTPCODES.NOT_FOUND,
+            })
+          );
+        }
+      } else {
+        next(
+          new MainAppError({
+            message: "User not Found",
+            httpcode: HTTPCODES.NOT_FOUND,
+          })
+        );
+      }
     } else {
       next(
         new MainAppError({
-          httpcode: HTTPCODES.NOT_FOUND,
           message: "Email or password not correct",
+          httpcode: HTTPCODES.CONFLICT,
         })
       );
     }
   }
 );
-
 // Get all Users:
 export const GetAllUsers = AsyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {

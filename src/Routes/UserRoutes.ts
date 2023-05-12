@@ -14,6 +14,7 @@ import {
   UserUpdatesTheirProfile,
   UsersLogin,
   UsersRegistration,
+  UsersVerification,
 } from "../Controllers/UserControllers";
 
 const UserRouter = express.Router();
@@ -23,6 +24,9 @@ UserRouter.route("/registeruser").post(
   UserRegisterValidation,
   UsersRegistration
 );
+
+// Verify users:
+UserRouter.route("/verify-user/:userID").get(UsersVerification);
 
 // Login users:
 UserRouter.route("/loginuser").post(UserLoginValidation, UsersLogin);
