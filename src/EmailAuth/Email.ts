@@ -6,17 +6,19 @@ import { EnvironmentVariables } from "../Config/EnvironmentVariables";
 import { HTTPCODES } from "../Utils/MainAppError";
 
 const GOOGLE_ID = EnvironmentVariables.GOOGLE_ID;
-console.log(GOOGLE_ID);
 
 const GOOGLE_SECRET = EnvironmentVariables.GOOGLE_SECRET;
 
-const GOOGLE_REFRESHTOKEN = EnvironmentVariables.GOOGLE_REFRESHTOKEN;
+const GOOGLE_REFRESHTOKEN =
+  "1//04k_z9ebpngq-CgYIARAAGAQSNwF-L9Ir0IlTnY6iVtGwKhCyOuFixABn1LPLxlyYot70MYSTKHyO7ad7p2hJVYM0aIHWO-SDI6M";
 
 const GOOGLE_REDIRECT: string = EnvironmentVariables.GOOGLE_REDIRECT;
 
 const oAuth = new google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, GOOGLE_REDIRECT);
 
 oAuth.setCredentials({ access_token: GOOGLE_REFRESHTOKEN });
+
+const frontendurl = EnvironmentVariables.Verification_URL;
 
 // Verify user email for ecobin:
 export const VerifyUsers = async (user: any) => {
@@ -34,8 +36,6 @@ export const VerifyUsers = async (user: any) => {
         accessToken: GetUserAccessToken.token,
       },
     });
-
-    const frontendurl = EnvironmentVariables.Verification_URL;
 
     // Connecting ejs file:
     const EmailVerifyEjs = path.join(

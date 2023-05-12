@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, Response, response } from "express";
 import { AsyncHandler } from "../Utils/AsyncHandler";
 import bcrypt from "bcrypt";
 import UserModels from "../Models/UserModels";
@@ -40,7 +40,6 @@ export const UsersRegistration = AsyncHandler(
         password: hashedPassword,
         station: FindStation,
         numberOfRequests: 4,
-        // isVerified: true,
       });
 
       VerifyUsers(users);
@@ -56,6 +55,35 @@ export const UsersRegistration = AsyncHandler(
       next(
         new MainAppError({
           message: "Station not found, Could not register user",
+          httpcode: HTTPCODES.BAD_REQUEST,
+        })
+      );
+    }
+  }
+);
+
+// Users Verification:
+export const UsersVerification = AsyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { userID } = req.params;
+    const User = await UserModels.findByIdAndUpdate(
+      userID,
+      {
+        token: "",
+        verified: true,
+      },
+      { new: true }
+    );
+
+    if (User) {
+      return res.status(HTTPCODES.OK).json({
+        message: "User Verification Successfull, proceed to login",
+        data: User,
+      });
+    } else {
+      next(
+        new MainAppError({
+          message: "Verification failed",
           httpcode: HTTPCODES.BAD_REQUEST,
         })
       );
