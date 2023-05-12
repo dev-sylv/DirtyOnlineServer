@@ -40,10 +40,10 @@ export const UsersRegistration = AsyncHandler(
         password: hashedPassword,
         station: FindStation,
         numberOfRequests: 4,
-        isVerified: true,
+        // isVerified: true,
       });
 
-      VerifyUsers(users, "success");
+      VerifyUsers(users);
 
       FindStation?.users.push(new mongoose.Types.ObjectId(users?._id));
       FindStation?.save();

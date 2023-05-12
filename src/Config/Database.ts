@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { EnvironmentVariables } from "./EnvironmentVariables";
 
-const db_Url = "mongodb://localhost/MalamOnline";
+const db_Url = "mongodb://127.0.0.1:27017/MalamOnline";
 
 const LIVEURI = EnvironmentVariables.MONGODB_STRING;
 

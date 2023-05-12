@@ -6,6 +6,7 @@ import { EnvironmentVariables } from "../Config/EnvironmentVariables";
 import { HTTPCODES } from "../Utils/MainAppError";
 
 const GOOGLE_ID = EnvironmentVariables.GOOGLE_ID;
+console.log(GOOGLE_ID);
 
 const GOOGLE_SECRET = EnvironmentVariables.GOOGLE_SECRET;
 
@@ -18,7 +19,7 @@ const oAuth = new google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, GOOGLE_REDIRECT);
 oAuth.setCredentials({ access_token: GOOGLE_REFRESHTOKEN });
 
 // Verify user email for ecobin:
-export const VerifyUsers = async (user: any, res: any) => {
+export const VerifyUsers = async (user: any) => {
   try {
     const GetUserAccessToken: any = await oAuth.getAccessToken();
 
@@ -61,16 +62,18 @@ export const VerifyUsers = async (user: any, res: any) => {
     transporter
       .sendMail(Mailer)
       .then(() => {
-        return res.status(200).json({
-          message: "Verification email sent",
-          data: "View your email to verify your account",
-        });
+        console.log("Verification email sent");
+        // return res.status(200).json({
+        //   message: "Verification email sent",
+        //   data: "View your email to verify your account",
+        // });
       })
       .catch((err) => {
-        return res.status(HTTPCODES.INTERNAL_SERVER_ERROR).json({
-          message: "An error occured, please try again",
-          data: err,
-        });
+        console.log("An error occured, please try again");
+        // return res.status(HTTPCODES.INTERNAL_SERVER_ERROR).json({
+        //   message: "An error occured, please try again",
+        //   data: err,
+        // });
       });
   } catch (error) {
     console.log("An error occured in sending email", error);
