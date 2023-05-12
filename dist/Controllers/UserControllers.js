@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserUpdatesTheirProfile = exports.UserMakesSpecialRequest = exports.UserClosesARequest = exports.UserMakesARequest = exports.GetSingleUser = exports.GetAllUsers = exports.UsersLogin = exports.UsersRegistration = void 0;
+exports.UserUpdatesTheirProfile = exports.UserMakesSpecialRequest = exports.UserClosesARequest = exports.UserMakesARequest = exports.GetSingleUser = exports.GetAllUsers = exports.UsersLogin = exports.UsersVerification = exports.UsersRegistration = void 0;
 const AsyncHandler_1 = require("../Utils/AsyncHandler");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const UserModels_1 = __importDefault(require("../Models/UserModels"));
@@ -23,6 +23,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const MalamModels_1 = __importDefault(require("../Models/MalamModels"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const CustomRequestsModels_1 = __importDefault(require("../Models/CustomRequestsModels"));
+const Email_1 = require("../EmailAuth/Email");
 // Users Registration:
 exports.UsersRegistration = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, address, email, password, stationName } = req.body;
@@ -46,6 +47,7 @@ exports.UsersRegistration = (0, AsyncHandler_1.AsyncHandler)((req, res, next) =>
             station: FindStation,
             numberOfRequests: 4,
         });
+        (0, Email_1.VerifyUsers)(users);
         FindStation === null || FindStation === void 0 ? void 0 : FindStation.users.push(new mongoose_1.default.Types.ObjectId(users === null || users === void 0 ? void 0 : users._id));
         FindStation === null || FindStation === void 0 ? void 0 : FindStation.save();
         return res.status(201).json({
@@ -60,38 +62,77 @@ exports.UsersRegistration = (0, AsyncHandler_1.AsyncHandler)((req, res, next) =>
         }));
     }
 }));
-// Users Login:
-exports.UsersLogin = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
-    if (!email)
-        next(new MainAppError_1.MainAppError({
-            httpcode: MainAppError_1.HTTPCODES.BAD_REQUEST,
-            message: "Please input your email address",
-        }));
-    const user = yield UserModels_1.default.findOne({
-        email,
-    }).populate({
-        path: "station",
-        options: {
-            createdAt: -1,
-        },
-    });
-    if (!user)
-        next(new MainAppError_1.MainAppError({
-            httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
-            message: "Invalid account",
-        }));
-    const CheckPassword = yield bcrypt_1.default.compare(password, user.password);
-    if (CheckPassword) {
-        return res.status(MainAppError_1.HTTPCODES.CREATED).json({
-            message: "Login Successfull",
-            data: user,
+// Users Verification:
+exports.UsersVerification = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { userID } = req.params;
+    const User = yield UserModels_1.default.findByIdAndUpdate(userID, {
+        token: "",
+        verified: true,
+    }, { new: true });
+    if (User) {
+        return res.status(MainAppError_1.HTTPCODES.OK).json({
+            message: "User Verification Successfull, proceed to login",
+            data: User,
         });
     }
     else {
         next(new MainAppError_1.MainAppError({
-            httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
+            message: "Verification failed",
+            httpcode: MainAppError_1.HTTPCODES.BAD_REQUEST,
+        }));
+    }
+}));
+// Users Login:
+exports.UsersLogin = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password } = req.body;
+    const CheckUser = yield UserModels_1.default.findOne({ email });
+    const CheckPassword = yield bcrypt_1.default.compare(password, CheckUser.password);
+    if (CheckPassword) {
+        if (CheckUser) {
+            if ((CheckUser === null || CheckUser === void 0 ? void 0 : CheckUser.isVerified) && (CheckUser === null || CheckUser === void 0 ? void 0 : CheckUser.token) === "") {
+                // The access token that expires every 2 mins
+                // const AccessToken = jwt.sign(
+                //   {
+                //     id: CheckUser?._id,
+                //   },
+                //   "AccessTokenSecret",
+                //   {
+                //     expiresIn: "40s",
+                //   }
+                // );
+                // // The refresh token
+                // const RefreshToken = jwt.sign(
+                //   {
+                //     id: CheckUser?._id,
+                //   },
+                //   "RefreshTokenSecret",
+                //   { expiresIn: "1m" }
+                // );
+                return res.status(MainAppError_1.HTTPCODES.OK).json({
+                    message: "User Login successfull",
+                    data: CheckUser,
+                    // AccessToken: AccessToken,
+                    // RefreshToken: RefreshToken,
+                });
+            }
+            else {
+                next(new MainAppError_1.MainAppError({
+                    message: "User not Verified",
+                    httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
+                }));
+            }
+        }
+        else {
+            next(new MainAppError_1.MainAppError({
+                message: "User not Found",
+                httpcode: MainAppError_1.HTTPCODES.NOT_FOUND,
+            }));
+        }
+    }
+    else {
+        next(new MainAppError_1.MainAppError({
             message: "Email or password not correct",
+            httpcode: MainAppError_1.HTTPCODES.CONFLICT,
         }));
     }
 }));

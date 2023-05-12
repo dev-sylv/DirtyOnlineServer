@@ -14,9 +14,19 @@ const DirectorRoutes_1 = __importDefault(require("./Routes/DirectorRoutes"));
 const StationRoutes_1 = __importDefault(require("./Routes/StationRoutes"));
 const RequestRoutes_1 = __importDefault(require("./Routes/RequestRoutes"));
 const AppConfig = (app) => {
+    app.set("view engine", "ejs");
     app.use(express_1.default.json());
     app.use((0, cors_1.default)());
     app.use((0, morgan_1.default)("dev"));
+    app.get("/", (req, res) => {
+        return res.status(200).json({
+            message: "API READY FOR ecoBIN Project",
+        });
+    });
+    // Rendering ejs file on the browser:
+    app.get("/views/verify", (req, res) => {
+        res.render("AccountVerification");
+    });
     // Configuring the routes:
     app.use("/api/director", DirectorRoutes_1.default);
     app.use("/api/users", UserRoutes_1.default);

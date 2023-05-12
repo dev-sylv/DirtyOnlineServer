@@ -74,6 +74,12 @@ const UserSchema: Schema<UserDetails> = new Schema(
       type: Boolean,
       default: false,
     },
+    OTP: {
+      type: String,
+    },
+    token: {
+      type: String,
+    },
   },
   {
     timestamps: true,

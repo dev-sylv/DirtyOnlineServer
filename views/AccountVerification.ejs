@@ -7,12 +7,81 @@
     <title>Email Verification</title>
   </head>
   <body>
-    <h1>Hi <%= name %></h1>
-    <p>Welcome to ecoBIN</p>
-    <h3>Thank you for signing up, this is your email: <%= email %></h3>
+    <container
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: center;
+flex-direction: column;
+text-align: center;
+        font-family: poppins;
+      ">
+      <div>
 
-    <p>
-      Click here to complete registration: <a href="<%= url%>">Verify email</a>
-    </p>
+        <div
+        align="center"
+        style="border-radius: 4px">
+        <img
+          src="https://res.cloudinary.com/dev-sylvia/image/upload/v1682590094/uiqz316o8wzfddmz78sx.png"
+          width="250px"
+          height="120px"
+          style="padding-top: 5px; object-fit: contain"
+          alt="EcoBin logo"
+          border="0" />
+      </div>
+       
+      <h2 style="color: #03903e"> Hi <%= name %></h2>
+      </div>
+
+      <div>
+        <h3>Thank you for signing up on ecoBIN<a waste management initiative></h3>
+      </div>
+
+        <div>
+          <p>
+            Please verify that your email address is <b style="color: #2E53EF;"><%= email %></b>,
+              and that you entered it when signing up on ECOBIN.
+          </p>
+        </div>
+
+        <div>
+          <a href="<%= url %>">
+            <button style="background-color: #03903e;
+        color: white;
+        padding: 15px 20px 15px 20px;
+        border-radius: 5px;
+        outline: none;
+        border: none;
+        text-decoration: none; cursor: pointer;">Verify your account</button>
+          </a>
+        </div>
+
+        <div>
+          <h5>
+            Let's team up to ensure proper waste disposal and promote recycling
+            within our communities. Now with a click of a button, YOU CAN.
+          </h5>
+        </div>
+
+        <div style="background-color: #2e53ef;
+        color: white;
+        border-radius: 5px;
+        padding: 10px 20px 10px 20px;">
+          <p style="margin: 0;">Cheers to Healthy Living!</p>
+          <p style="margin: 0;">The ecoBIN Team ♻</p>
+        </div>
+
+        <div>
+          <p>Follow us on all our social media handles</p>
+          <a href="https://www.instagram.com/ecoBIN_ng/" target="_blank" style="text-decoration: none; color: #03903e;">Linkedln</a>
+          <br>
+          <a href="https://www.facebook.com/ecobin.ng" target="_blank"  style="text-decoration: none; color: #2E53EF;">Facebook</a>
+          <br>
+          <a href="https://twitter.com/ecobin_ng" target="_blank"  style="text-decoration: none; color: #03903e;">Twitter</a>
+          <br>
+          <a href="#"  target="_blank"  style="text-decoration: none; color: #2E53EF;">Instagram</a>
+        </div>
+
+    </container>
   </body>
 </html>

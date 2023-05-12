@@ -14,9 +14,21 @@ import StationRouter from "./Routes/StationRoutes";
 import RequestRouter from "./Routes/RequestRoutes";
 
 export const AppConfig = (app: Application) => {
+  app.set("view engine", "ejs");
   app.use(express.json());
   app.use(cors());
   app.use(morgan("dev"));
+
+  app.get("/", (req: Request, res: Response) => {
+    return res.status(200).json({
+      message: "API READY FOR ecoBIN Project",
+    });
+  });
+
+  // Rendering ejs file on the browser:
+  app.get("/views/verify", (req: Request, res: Response) => {
+    res.render("AccountVerification");
+  });
 
   // Configuring the routes:
   app.use("/api/director", DirectorRouter);

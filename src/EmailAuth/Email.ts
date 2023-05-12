@@ -1,23 +1,24 @@
 import ejs from "ejs";
-
 import nodemailer from "nodemailer";
 import path from "path";
+import { google } from "googleapis";
+import { EnvironmentVariables } from "../Config/EnvironmentVariables";
+import { HTTPCODES } from "../Utils/MainAppError";
 
-import { google, homegraph_v1 } from "googleapis";
+const GOOGLE_ID = EnvironmentVariables.GOOGLE_ID;
 
-const GOOGLE_ID =
-  "607063325888-5r9ma23i481qd1tk065dlgf9pofascfi.apps.googleusercontent.com";
-
-const GOOGLE_SECRET = "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";
+const GOOGLE_SECRET = EnvironmentVariables.GOOGLE_SECRET;
 
 const GOOGLE_REFRESHTOKEN =
   "1//04k_z9ebpngq-CgYIARAAGAQSNwF-L9Ir0IlTnY6iVtGwKhCyOuFixABn1LPLxlyYot70MYSTKHyO7ad7p2hJVYM0aIHWO-SDI6M";
 
-const GOOGLE_REDIRECT: string = "https://developers.google.com/oauthplayground";
+const GOOGLE_REDIRECT: string = EnvironmentVariables.GOOGLE_REDIRECT;
 
 const oAuth = new google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, GOOGLE_REDIRECT);
 
 oAuth.setCredentials({ access_token: GOOGLE_REFRESHTOKEN });
+
+const frontendurl = EnvironmentVariables.Verification_URL;
 
 // Verify user email for ecobin:
 export const VerifyUsers = async (user: any) => {
@@ -36,7 +37,6 @@ export const VerifyUsers = async (user: any) => {
       },
     });
 
-    const frontendurl = "http://localhost:3000/verify";
     // Connecting ejs file:
     const EmailVerifyEjs = path.join(
       __dirname,
@@ -55,7 +55,7 @@ export const VerifyUsers = async (user: any) => {
     const Mailer = {
       from: "ecoBIN ♻ <ecobinng@gmail.com>",
       to: user?.email,
-      subject: "Email Verification",
+      subject: "Account Verification",
       html: Renderemailfile,
     };
 
@@ -63,11 +63,19 @@ export const VerifyUsers = async (user: any) => {
       .sendMail(Mailer)
       .then(() => {
         console.log("Verification email sent");
+        // return res.status(200).json({
+        //   message: "Verification email sent",
+        //   data: "View your email to verify your account",
+        // });
       })
       .catch((err) => {
-        console.log("Email not sent");
+        console.log("An error occured, please try again");
+        // return res.status(HTTPCODES.INTERNAL_SERVER_ERROR).json({
+        //   message: "An error occured, please try again",
+        //   data: err,
+        // });
       });
   } catch (error) {
-    console.log("An error occured in sending email");
+    console.log("An error occured in sending email", error);
   }
 };
