@@ -8,4 +8,6 @@ export const EnvironmentVariables = {
   GOOGLE_ID: process.env.GOOGLE_ID as string,
   GOOGLE_SECRET: process.env.GOOGLE_SECRET as string,
   GOOGLE_REFRESHTOKEN: process.env.GOOGLE_REFRESHTOKEN as string,
+  GOOGLE_REDIRECT: process.env.GOOGLE_REDIRECT as string,
+  Verification_URL: process.env.Verification_URL as string,
 };
