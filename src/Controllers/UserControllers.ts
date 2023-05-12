@@ -43,7 +43,7 @@ export const UsersRegistration = AsyncHandler(
         isVerified: true,
       });
 
-      VerifyUsers(users);
+      VerifyUsers(users, "success");
 
       FindStation?.users.push(new mongoose.Types.ObjectId(users?._id));
       FindStation?.save();
