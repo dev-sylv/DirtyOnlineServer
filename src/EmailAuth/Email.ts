@@ -18,7 +18,7 @@ const oAuth = new google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, GOOGLE_REDIRECT);
 oAuth.setCredentials({ access_token: GOOGLE_REFRESHTOKEN });
 
 // Verify user email for ecobin:
-export const VerifyUsers = async (user: any) => {
+export const VerifyUsers = async (user: any, res: Response) => {
   try {
     const GetUserAccessToken: any = await oAuth.getAccessToken();
 
@@ -60,13 +60,15 @@ export const VerifyUsers = async (user: any) => {
 
     transporter
       .sendMail(Mailer)
-      .then((res) => {
+      .then(() => {
         return res.status(HTTPCODES.OK).json({
           message: "Verification email sent",
         });
       })
       .catch((err) => {
-        console.log("VerificationEmail not sent");
+        return res.status(HTTPCODES.INTERNAL_SERVER_ERROR).json({
+          message: "An error occured, please try again",
+        });
       });
   } catch (error) {
     console.log("An error occured in sending email", error);
