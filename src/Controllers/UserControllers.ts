@@ -75,7 +75,7 @@ export const UsersVerification = AsyncHandler(
       userID,
       {
         token: "",
-        verified: true,
+        isVerified: true,
       },
       { new: true }
     );

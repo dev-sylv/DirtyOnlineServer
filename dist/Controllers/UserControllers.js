@@ -71,7 +71,7 @@ exports.UsersVerification = (0, AsyncHandler_1.AsyncHandler)((req, res, next) =>
     const { userID } = req.params;
     const User = yield UserModels_1.default.findByIdAndUpdate(userID, {
         token: "",
-        verified: true,
+        isVerified: true,
     }, { new: true });
     if (User) {
         return res.status(MainAppError_1.HTTPCODES.OK).json({
