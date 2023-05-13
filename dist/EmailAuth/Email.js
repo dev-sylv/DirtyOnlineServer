@@ -17,14 +17,19 @@ const ejs_1 = __importDefault(require("ejs"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const path_1 = __importDefault(require("path"));
 const googleapis_1 = require("googleapis");
-const EnvironmentVariables_1 = require("../Config/EnvironmentVariables");
-const GOOGLE_ID = EnvironmentVariables_1.EnvironmentVariables.GOOGLE_ID;
-const GOOGLE_SECRET = EnvironmentVariables_1.EnvironmentVariables.GOOGLE_SECRET;
+// const GOOGLE_ID = EnvironmentVariables.GOOGLE_ID;
+// const GOOGLE_SECRET = EnvironmentVariables.GOOGLE_SECRET;
+// const GOOGLE_REFRESHTOKEN =
+//   "1//04k_z9ebpngq-CgYIARAAGAQSNwF-L9Ir0IlTnY6iVtGwKhCyOuFixABn1LPLxlyYot70MYSTKHyO7ad7p2hJVYM0aIHWO-SDI6M";
+// const GOOGLE_REDIRECT: string = EnvironmentVariables.GOOGLE_REDIRECT;
+// const frontendurl = EnvironmentVariables.Verification_URL;
+const GOOGLE_ID = "607063325888-5r9ma23i481qd1tk065dlgf9pofascfi.apps.googleusercontent.com";
+const GOOGLE_SECRET = "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";
 const GOOGLE_REFRESHTOKEN = "1//04k_z9ebpngq-CgYIARAAGAQSNwF-L9Ir0IlTnY6iVtGwKhCyOuFixABn1LPLxlyYot70MYSTKHyO7ad7p2hJVYM0aIHWO-SDI6M";
-const GOOGLE_REDIRECT = EnvironmentVariables_1.EnvironmentVariables.GOOGLE_REDIRECT;
+const GOOGLE_REDIRECT = "https://developers.google.com/oauthplayground";
+const Verification_URL = "https://ecobin.pages.dev/verified";
 const oAuth = new googleapis_1.google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, GOOGLE_REDIRECT);
 oAuth.setCredentials({ access_token: GOOGLE_REFRESHTOKEN });
-const frontendurl = EnvironmentVariables_1.EnvironmentVariables.Verification_URL;
 // Verify user email for ecobin:
 const VerifyUsers = (user) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -48,7 +53,7 @@ const VerifyUsers = (user) => __awaiter(void 0, void 0, void 0, function* () {
             email: user === null || user === void 0 ? void 0 : user.email,
             userId: user === null || user === void 0 ? void 0 : user._id,
             userToken: user === null || user === void 0 ? void 0 : user.token,
-            url: `${frontendurl}/${user === null || user === void 0 ? void 0 : user._id}/${user === null || user === void 0 ? void 0 : user.token}`,
+            url: `${Verification_URL}/${user === null || user === void 0 ? void 0 : user._id}/${user === null || user === void 0 ? void 0 : user.token}`,
         });
         const Mailer = {
             from: "ecoBIN ♻ <ecobinng@gmail.com>",
