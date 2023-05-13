@@ -5,20 +5,32 @@ import { google } from "googleapis";
 import { EnvironmentVariables } from "../Config/EnvironmentVariables";
 import { HTTPCODES } from "../Utils/MainAppError";
 
-const GOOGLE_ID = EnvironmentVariables.GOOGLE_ID;
+// const GOOGLE_ID = EnvironmentVariables.GOOGLE_ID;
 
-const GOOGLE_SECRET = EnvironmentVariables.GOOGLE_SECRET;
+// const GOOGLE_SECRET = EnvironmentVariables.GOOGLE_SECRET;
+
+// const GOOGLE_REFRESHTOKEN =
+//   "1//04k_z9ebpngq-CgYIARAAGAQSNwF-L9Ir0IlTnY6iVtGwKhCyOuFixABn1LPLxlyYot70MYSTKHyO7ad7p2hJVYM0aIHWO-SDI6M";
+
+// const GOOGLE_REDIRECT: string = EnvironmentVariables.GOOGLE_REDIRECT;
+
+// const frontendurl = EnvironmentVariables.Verification_URL;
+
+const GOOGLE_ID =
+  "607063325888-5r9ma23i481qd1tk065dlgf9pofascfi.apps.googleusercontent.com";
+
+const GOOGLE_SECRET = "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";
 
 const GOOGLE_REFRESHTOKEN =
   "1//04k_z9ebpngq-CgYIARAAGAQSNwF-L9Ir0IlTnY6iVtGwKhCyOuFixABn1LPLxlyYot70MYSTKHyO7ad7p2hJVYM0aIHWO-SDI6M";
 
-const GOOGLE_REDIRECT: string = EnvironmentVariables.GOOGLE_REDIRECT;
+const GOOGLE_REDIRECT = "https://developers.google.com/oauthplayground";
+
+const Verification_URL = "https://ecobin.pages.dev/verified";
 
 const oAuth = new google.auth.OAuth2(GOOGLE_ID, GOOGLE_SECRET, GOOGLE_REDIRECT);
 
 oAuth.setCredentials({ access_token: GOOGLE_REFRESHTOKEN });
-
-const frontendurl = EnvironmentVariables.Verification_URL;
 
 // Verify user email for ecobin:
 export const VerifyUsers = async (user: any) => {
@@ -49,7 +61,7 @@ export const VerifyUsers = async (user: any) => {
       email: user?.email,
       userId: user?._id,
       userToken: user?.token,
-      url: `${frontendurl}/${user?._id}/${user?.token}`,
+      url: `${Verification_URL}/${user?._id}/${user?.token}`,
     });
 
     const Mailer = {

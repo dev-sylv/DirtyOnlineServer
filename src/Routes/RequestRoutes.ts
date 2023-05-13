@@ -7,7 +7,7 @@ import {
 
 const RequestRouter = express.Router();
 
-// Get all requests in the database::
+// Get all requests in the database:
 RequestRouter.route("/all-requests").get(GetAllRequests);
 
 // Get the 5 recent requests for the director's dashboard:
