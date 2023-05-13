@@ -4,6 +4,12 @@ import { requestInterface } from "../Interfaces/AllInterfaces";
 
 const RequestSchema = new Schema(
   {
+    user: {
+      type: String,
+    },
+    address: {
+      type: String,
+    },
     requestMessage: {
       type: String,
     },

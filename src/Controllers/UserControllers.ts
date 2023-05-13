@@ -10,11 +10,14 @@ import MalamModels from "../Models/MalamModels";
 import cron from "node-cron";
 import CustomRequestModels from "../Models/CustomRequestsModels";
 import { VerifyUsers } from "../EmailAuth/Email";
+import crypto from "crypto";
 
 // Users Registration:
 export const UsersRegistration = AsyncHandler(
   async (req: any, res: Response, next: NextFunction) => {
     const { name, address, email, password, stationName } = req.body;
+
+    const token = crypto.randomBytes(48).toString("hex");
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -40,6 +43,8 @@ export const UsersRegistration = AsyncHandler(
         password: hashedPassword,
         station: FindStation,
         numberOfRequests: 4,
+        token,
+        isVerified: false,
       });
 
       VerifyUsers(users);
@@ -224,6 +229,8 @@ export const UserMakesARequest = AsyncHandler(
           // User makes the requests:
           const Time = new Date().toString();
           const DisposewasteRequests = await RequestModels.create({
+            user: getUser?.name,
+            address: getUser?.address,
             requestMessage: `${getUser?.name} who resides at ${getUser?.address} made a request by ${Time} for a waste disposal`,
             requestStatus: true,
             assigned: false,
