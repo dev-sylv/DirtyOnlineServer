@@ -24,9 +24,11 @@ const MalamModels_1 = __importDefault(require("../Models/MalamModels"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const CustomRequestsModels_1 = __importDefault(require("../Models/CustomRequestsModels"));
 const Email_1 = require("../EmailAuth/Email");
+const crypto_1 = __importDefault(require("crypto"));
 // Users Registration:
 exports.UsersRegistration = (0, AsyncHandler_1.AsyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, address, email, password, stationName } = req.body;
+    const token = crypto_1.default.randomBytes(48).toString("hex");
     const salt = yield bcrypt_1.default.genSalt(10);
     const hashedPassword = yield bcrypt_1.default.hash(password, salt);
     const findUser = yield UserModels_1.default.findOne({ email });
@@ -46,6 +48,8 @@ exports.UsersRegistration = (0, AsyncHandler_1.AsyncHandler)((req, res, next) =>
             password: hashedPassword,
             station: FindStation,
             numberOfRequests: 4,
+            token,
+            isVerified: false,
         });
         (0, Email_1.VerifyUsers)(users);
         FindStation === null || FindStation === void 0 ? void 0 : FindStation.users.push(new mongoose_1.default.Types.ObjectId(users === null || users === void 0 ? void 0 : users._id));
@@ -189,6 +193,8 @@ exports.UserMakesARequest = (0, AsyncHandler_1.AsyncHandler)((req, res, next) =>
                 // User makes the requests:
                 const Time = new Date().toString();
                 const DisposewasteRequests = yield RequestModels_1.default.create({
+                    user: getUser === null || getUser === void 0 ? void 0 : getUser.name,
+                    address: getUser === null || getUser === void 0 ? void 0 : getUser.address,
                     requestMessage: `${getUser === null || getUser === void 0 ? void 0 : getUser.name} who resides at ${getUser === null || getUser === void 0 ? void 0 : getUser.address} made a request by ${Time} for a waste disposal`,
                     requestStatus: true,
                     assigned: false,

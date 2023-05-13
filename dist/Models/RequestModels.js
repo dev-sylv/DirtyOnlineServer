@@ -2,6 +2,12 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const RequestSchema = new mongoose_1.Schema({
+    user: {
+        type: String,
+    },
+    address: {
+        type: String,
+    },
     requestMessage: {
         type: String,
     },
