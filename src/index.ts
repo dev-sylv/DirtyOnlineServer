@@ -7,6 +7,7 @@ import { AppConfig } from "./MainApp";
 const port = EnvironmentVariables.PORT;
 
 const app: Application = express();
+
 AppConfig(app);
 DBCONNECTION();
 
